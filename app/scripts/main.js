@@ -26,16 +26,16 @@ class Gallery {
       'captionBackground': $('#galleryCaptionBackground'),
       'caption': $('#galleryCaption'),
       'miniInfo': $('#galleryMiniInfo')
-    }
+    };
 
     // Set the animation length to be the same as the slide duration
     this.el.background.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
     this.el.captionBackground.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
 
-    this.imageIterator = Math.floor(Math.random() * this.images.length);
+    this.imageIterator = Math.floor(Math.random() * (this.images.length - 1));
 
     var dataImage = $('#gallery').attr('data-src');
-    this.loadImage(this.images[this.imageIterator++]);
+    this.setSlideView(this.images[this.imageIterator]);
     this.cycleImages();
 
     var duplicates = false, i = 0;
@@ -50,6 +50,30 @@ class Gallery {
     }
   }
 
+  setSlideView(image) {
+    let self = this;
+    this.loadImage(image);
+
+    // Set a timer to show the caption
+    setTimeout(function() {
+      self.el.caption.addClass('display');
+      self.el.captionBackground.addClass('display');
+      self.el.miniInfo.addClass('no-display');
+    }, self.slideDuration / 3);
+
+    // Another one to hide them at the last 4 seconds
+    setTimeout(function() {
+      self.el.caption.removeClass('display');
+      self.el.captionBackground.removeClass('display');
+      self.el.miniInfo.removeClass('no-display');
+    }, self.slideDuration - 5000);
+
+    // Toggle the loading screen on the last two seconds
+    setTimeout(function() {
+      self.el.root.addClass('loading');
+    }, self.slideDuration - 2000);
+  }
+
   cycleImages() {
     let self = this;
     setInterval(function() {
@@ -57,27 +81,7 @@ class Gallery {
         // Reset back to the first array if cycled past the last one
         self.imageIterator = 0;
       }
-      // Set the image and the caption
-      self.loadImage(self.images[self.imageIterator]);
-
-      // Set a timer to show the caption
-      setTimeout(function() {
-        self.el.caption.addClass('display');
-        self.el.captionBackground.addClass('display');
-        self.el.miniInfo.addClass('no-display');
-      }, self.slideDuration / 3)
-
-      // Another one to hide them at the last 4 seconds
-      setTimeout(function() {
-        self.el.caption.removeClass('display');
-        self.el.captionBackground.removeClass('display');
-        self.el.miniInfo.removeClass('no-display');
-      }, self.slideDuration - 5000)
-
-      // Toggle the loading screen on the last two seconds
-      setTimeout(function() {
-        self.el.root.addClass('loading');
-      }, self.slideDuration - 2000)
+      self.setSlideView(self.images[self.imageIterator]);
     }, this.slideDuration);
   }
 
@@ -113,7 +117,7 @@ class Gallery {
     // Last animations for loading screen
     setTimeout(function() {
       self.el.root.removeClass('loaded');
-    }, this.slideDuration / 2)
+    }, this.slideDuration / 2);
   }
 
 }

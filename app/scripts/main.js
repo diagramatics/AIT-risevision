@@ -122,6 +122,63 @@ class Gallery {
 
 }
 
+class Time {
+  constructor() {
+    setInterval(function() {
+      let time = moment();
+      $('[data-time]').html(time.format('h:mm:ss a'));
+    }, 1000);
+  }
+}
+
+class TimeAlert {
+  constructor() {
+    this.el = {
+      'time': $('#timeAlertTime'),
+      'countdown': $('#timeAlertCountdown'),
+      'svg': $('#timeAlertSvg'),
+      'title': $('#timeAlertTitle')
+    };
+
+    var self = this;
+
+    this.endTime = new Date();
+    this.endTime.setMinutes(this.endTime.getMinutes() + 1);
+    this.countdown = countdown(function(ts) {
+      self.update(ts);
+    }, this.endTime);
+  }
+
+  update(ts) {
+    if (ts.value < 0) {
+      this.el.title.html('You\'re late!');
+
+      if (ts.minutes >= 15) {
+        this.clearCountdown();
+      }
+    }
+    let time = moment();
+    this.el.countdown.html(ts.minutes + ':' + ('0' + ts.seconds).slice(-2));
+    this.el.time.html(time.format('h:mm:ss a'));
+  }
+
+  clearCountdown() {
+    window.clearInterval(this.countdown);
+  }
+}
+
 $(function() {
-  var gallery = new Gallery();
+  // Check if there's a gallery and there's exactly only one on the DOM
+  if ($('[data-gallery]').length === 1) {
+    // Initialize the gallery
+    var gallery = new Gallery();
+  }
+
+  if ($('[data-timealert]').length === 1) {
+    var timeAlert = new TimeAlert();
+  }
+
+  if ($('[data-time]').length === 1) {
+    var time = new Time();
+  }
 });

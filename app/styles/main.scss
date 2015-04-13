@@ -1,10 +1,12 @@
 $icon-font-path: '../fonts/';
+$font-family-sans-serif:  "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 
 // bower:scss
 @import "bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 // endbower
 
 @import "animations";
+@import "timealert";
 
 body {
   // Considering this will only be rolled out on static screens, this is okay.
@@ -16,6 +18,22 @@ body {
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
+}
+
+.time {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  max-width: 110px;
+  margin: 0 auto;
+  padding: 8px 0;
+  background: black;
+  color: white;
+  border-radius: 2px;
+  text-align: center;
+  z-index: 999;
+  opacity: .8;
 }
 
 

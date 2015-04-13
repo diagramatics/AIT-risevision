@@ -28,23 +28,16 @@
   <!--[if lt IE 10]>
   <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-  <div id="time" class="time" data-time></div>
-
-  <figure id="gallery" class="gallery" data-src="/images/lorem-image.jpg" data-gallery>
-    <img id="galleryImage" class="gallery-image" src="/images/lorem-image.jpg" alt="">
-    <div id="galleryBackground" class="gallery-background"></div>
-    <div id="galleryCaptionBackground" class="gallery-caption-background"></div>
-    <figcaption id="galleryCaption" class="gallery-caption">
-      <h1>Lorem Graphics</h1>
-      <p>By Ipsum</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p>
-      <p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p>
-      <p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p>
-    </figcaption>
-    <div id="galleryMiniInfo" class="gallery-mini-info">
-      <strong>Lorem Graphics</strong> by <em>Ipsum</em>
+  <div class="time" data-time></div>
+  <div class="timealert" data-timealert>
+    <div class="timealert-inner">
+      <svg id="timeAlertSvg" class="timealert-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="50" />
+      </svg>
+      <h1 id="timeAlertTitle">Time to next class:</h1>
+      <div id="timeAlertCountdown" class="timealert-countdown">12:29</div>
     </div>
-  </figure>
+  </div>
 
 
   <!-- build:js scripts/vendor.js -->

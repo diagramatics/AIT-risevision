@@ -1,4 +1,6 @@
 /* jshint devel:true */
+/* global moment */
+/* global countdown */
 'use strict';
 
 class Gallery {
@@ -38,7 +40,7 @@ class Gallery {
     this.setSlideView(this.images[this.imageIterator]);
     this.cycleImages();
 
-    var duplicates = false, i = 0;
+    var duplicates = false;
     for (var i = 0; i < this.images.length; i++) {
       if (this.images[i].image === dataImage) {
         duplicates = true;
@@ -171,14 +173,14 @@ $(function() {
   // Check if there's a gallery and there's exactly only one on the DOM
   if ($('[data-gallery]').length === 1) {
     // Initialize the gallery
-    var gallery = new Gallery();
+    new Gallery();
   }
 
   if ($('[data-timealert]').length === 1) {
-    var timeAlert = new TimeAlert();
+    new TimeAlert();
   }
 
   if ($('[data-time]').length === 1) {
-    var time = new Time();
+    new Time();
   }
 });

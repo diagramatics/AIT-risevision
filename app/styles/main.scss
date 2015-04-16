@@ -7,6 +7,7 @@ $font-family-sans-serif:  "Source Sans Pro", "Helvetica Neue", Helvetica, Arial,
 
 @import "animations";
 @import "timealert";
+@import "announcement";
 
 body {
   // Considering this will only be rolled out on static screens, this is okay.

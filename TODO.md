@@ -1,3 +1,4 @@
+- ! RUN TESTS!
 - ! Find a way to be able to use Google Drive API to fetch all images on the specified folder the system uses to store images
 - Use Assemble (or anything else) for build system templating
 - Remove Bootstrap as dependency

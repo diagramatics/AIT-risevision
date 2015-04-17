@@ -7,62 +7,65 @@
 
 // Google API test code
 
-var CLIENT_ID = '404474158533-ismn9i3l92mjuhnt6ccl8jneggd1n9ru.apps.googleusercontent.com';
-var SCOPES = 'https://www.googleapis.com/auth/drive';
-var googleAPI;
-
-/**
- * Called when the client library is loaded to start the auth flow.
- */
-function handleClientLoad() {
-  googleAPI = new GoogleAPI();
-}
-
-class GoogleAPI {
-  constructor() {
-    gapi.client.setApiKey('AIzaSyBRFaPWEEcN7H9EyTqMZqDyJuz43ENHQ8g');
-    window.setTimeout(this.checkAuth, 1);
-  }
-
-  checkAuth() {
-      gapi.auth.authorize({
-        'client_id': CLIENT_ID,
-        'scope': SCOPES,
-        'immediate': true
-      }, this.handleAuthResult);
-  }
-
-  handleAuthResult(authResult) {
-    if (authResult && !authResult.error) {
-      console.log('yay');
-    }
-    else {
-      console.log('nay');
-    }
-  }
-}
+// var CLIENT_ID = '404474158533-ismn9i3l92mjuhnt6ccl8jneggd1n9ru.apps.googleusercontent.com';
+// var SCOPES = 'https://www.googleapis.com/auth/drive';
+// var googleAPI;
+//
+// /**
+//  * Called when the client library is loaded to start the auth flow.
+//  */
+// function handleClientLoad() {
+//   googleAPI = new GoogleAPI();
+// }
+//
+// class GoogleAPI {
+//   constructor() {
+//     gapi.client.setApiKey('AIzaSyBRFaPWEEcN7H9EyTqMZqDyJuz43ENHQ8g');
+//     window.setTimeout(this.checkAuth, 1);
+//   }
+//
+//   checkAuth() {
+//       gapi.auth.authorize({
+//         'client_id': CLIENT_ID,
+//         'scope': SCOPES,
+//         'immediate': true
+//       }, this.handleAuthResult);
+//   }
+//
+//   handleAuthResult(authResult) {
+//     if (authResult && !authResult.error) {
+//       console.log('yay');
+//     }
+//     else {
+//       console.log('nay');
+//     }
+//   }
+// }
 
 // ---------
+
+var G_SPREADSHEET_ID = '1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw';
 
 class Gallery {
   constructor() {
     this.slideDuration = 10000;
-    this.images = [
-      {
-        'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',
-        'name': 'Lorem Graphics',
-        'author': 'Ipsum',
-        'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p>'
-      },
-      {
-        'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichSGxfRkhHbGk5Y1E',
-        'name': 'Lorem Art',
-        'author': 'Lorema',
-        'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p>'
-      }
-    ];
+    // this.images = [
+    //   {
+    //     'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',
+    //     'name': 'Lorem Graphics',
+    //     'author': 'Ipsum',
+    //     'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p>'
+    //   },
+    //   {
+    //     'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichSGxfRkhHbGk5Y1E',
+    //     'name': 'Lorem Art',
+    //     'author': 'Lorema',
+    //     'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p>'
+    //   }
+    // ];
+    this.images = [];
+    this.loadImagesData();
 
-    this.preloadImages();
 
     this.el = {
       'root': $('#gallery'),
@@ -72,6 +75,11 @@ class Gallery {
       'caption': $('#galleryCaption'),
       'miniInfo': $('#galleryMiniInfo')
     };
+  }
+
+  asyncLoadFinished() {
+    // Preload images
+    this.preloadImages();
 
     // Set the animation length to be the same as the slide duration
     this.el.background.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
@@ -82,10 +90,30 @@ class Gallery {
     this.cycleImages();
   }
 
+  loadImagesData() {
+    let self = this;
+    let jsonURL = 'https://cors-io.herokuapp.com/spreadsheets.google.com/feeds/list/'+ G_SPREADSHEET_ID +'/od6/public/values?alt=json';
+    $.getJSON(jsonURL, function(data) {
+      for (var i = 0; i < data.feed.entry.length; i++) {
+        let row = data.feed.entry[i];
+        self.images.push({
+          'image': row.gsx$image.$t,
+          'name': row.gsx$title.$t,
+          'author': row.gsx$author.$t,
+          'text': (row.gsx$content.$t).replace(/[\n\r]/g, '<br />')
+        });
+      }
+
+      self.asyncLoadFinished();
+    });
+  }
+
   preloadImages() {
-    for (var i = 0; i < this.images; i++) {
-      let image = new Image();
-      image.src(this.images[i]);
+    // TODO: Probably attach a callback so we can fire the gallery when everything gets loaded?
+    for (var i = 0; i < this.images.length; i++) {
+      // Preload images by making an <img> tag that's not used anywhere
+      // That way browser assumes it exists, needs the image and try and load it
+      $("<img />").attr("src", this.images[i].image);
     }
   }
 

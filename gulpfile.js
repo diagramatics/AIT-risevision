@@ -86,7 +86,7 @@ gulp.task('extras', function () {
 
 gulp.task('clean', require('del').bind(null, ['.tmp', 'dist']));
 
-gulp.task('serve', ['styles', 'scripts', 'fonts'], function () {
+gulp.task('serve', ['styles', 'scripts'], function () {
   browserSync({
     notify: false,
     port: 9000,
@@ -140,7 +140,7 @@ gulp.task('wiredep', function () {
 });
 
 gulp.task('build', ['jshint', 'post-html', 'images', 'extras'], function () {
-  return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
+  return gulp.src('dist/*.html').pipe($.size({title: 'build'}));
 });
 
 gulp.task('default', ['clean'], function () {

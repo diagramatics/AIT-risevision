@@ -43,8 +43,24 @@
 // }
 
 // ---------
+class G_Sheet {
+  constructor() {
+  }
 
-var G_SPREADSHEET_ID = '1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw';
+  static assembleJSONUrl(enumName) {
+    return 'https://cors-io.herokuapp.com/spreadsheets.google.com/feeds/list/'+ this.sheetID +'/'+ this.sheetEnum[enumName] +'/public/values?alt=json';
+  }
+}
+// ID is the ID from the URL of Google Sheet
+// The URL to open the Sheet is https://docs.google.com/a/ait.nsw.edu.au/spreadsheets/d/1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw/
+// Last part of the URL is the ID
+G_Sheet.sheetID = '1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw';
+// This enum is used for the positional ID of the spreadsheet
+G_Sheet.sheetEnum = {
+  "GALLERY": 1,
+  "TIME": 2,
+  "ANNOUNCEMENT": 3
+}
 
 class Gallery {
   constructor() {
@@ -92,7 +108,7 @@ class Gallery {
 
   loadImagesData() {
     let self = this;
-    let jsonURL = 'https://cors-io.herokuapp.com/spreadsheets.google.com/feeds/list/'+ G_SPREADSHEET_ID +'/od6/public/values?alt=json';
+    let jsonURL = G_Sheet.assembleJSONUrl('GALLERY');
     $.getJSON(jsonURL, function(data) {
       for (var i = 0; i < data.feed.entry.length; i++) {
         let row = data.feed.entry[i];
@@ -201,19 +217,70 @@ class Time {
 class TimeAlert {
   constructor() {
     this.el = {
-      'time': $('#timeAlertTime'),
       'countdown': $('#timeAlertCountdown'),
       'svg': $('#timeAlertSvg'),
       'title': $('#timeAlertTitle')
     };
 
-    var self = this;
+    this.times = [];
+    this.loadData();
 
-    this.endTime = new Date();
-    this.endTime.setMinutes(this.endTime.getMinutes() + 1);
+    // var self = this;
+    // this.endTime = new Date();
+    // this.endTime.setMinutes(this.endTime.getMinutes() + 1);
+    // this.countdown = countdown(function(ts) {
+    //   self.update(ts);
+    // }, this.endTime);
+  }
+
+  loadData() {
+    let self = this;
+    let jsonURL = G_Sheet.assembleJSONUrl('TIME');
+    let today = new Date();
+    $.getJSON(jsonURL, function(data) {
+      for (var i = 0; i < data.feed.entry.length; i++) {
+        let row = data.feed.entry[i];
+        let startTime = (row.gsx$classtimes.$t).split(':', 2);
+        // Set a date with today but with a different time
+        startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startTime[0], startTime[1], 0);
+        let endTime = (row.gsx$endtimes.$t).split(':', 2);
+        endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endTime[0], endTime[1], 0);
+
+        self.times.push({
+          'start': startTime,
+          'end': endTime
+        });
+      }
+      // After fetching is finished let's run the post-load function
+      self.loadDataFinished();
+    });
+  }
+
+  loadDataFinished() {
+    let self = this;
+    let nextClass = this.calculateNearestClass();
     this.countdown = countdown(function(ts) {
       self.update(ts);
-    }, this.endTime);
+    }, nextClass.start);
+  }
+
+  calculateNearestClass() {
+    let today = new Date();
+    let nextClass = false;
+    for (var i = 0; i < this.times.length; i++) {
+      // If the next schedule hasn't passed the current time yet
+      if (today < this.times[i].start) {
+        // Break the loop and return that class
+        return this.times[i];
+      }
+    }
+    // If after looping we can't find the next class that means the next class is tomorrow morning
+    // Return the next class at the first time of the day then by cloning the first array index and editing the start
+    let nextDayFirstClass = {
+      'start': new Date(new Date(this.times[0].start).setDate(this.times[0].start.getDate() + 1)),
+      'end': new Date(this.times[0].end)
+    };
+    return nextDayFirstClass;
   }
 
   update(ts) {
@@ -225,8 +292,11 @@ class TimeAlert {
       }
     }
     let time = moment();
-    this.el.countdown.html(ts.minutes + ':' + ('0' + ts.seconds).slice(-2));
-    this.el.time.html(time.format('h:mm:ss a'));
+    let hours = '';
+    if (ts.hours !== 0) {
+      hours = ts.hours + ':';
+    }
+    this.el.countdown.html(hours + ts.minutes + ':' + ('0' + ts.seconds).slice(-2));
   }
 
   clearCountdown() {

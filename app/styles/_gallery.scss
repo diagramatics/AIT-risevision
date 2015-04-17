@@ -1,0 +1,141 @@
+// The gallery
+$gallery-caption-width: 30%;
+
+.gallery {
+  height: 100vh;
+
+  .js & {
+    background-size: cover;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('/images/ait.svg'), linear-gradient(to bottom, white 0%, white 100%);
+    background-repeat: no-repeat;
+    background-size: 100px, cover;
+    background-position: center;
+    transform: translateX(100%);
+  }
+
+  &.loading {
+    &:after {
+      transition: all 2s ease-in-out;
+      transform: translateX(0)
+    }
+  }
+
+  &.loaded {
+    &:after {
+      transition: all 2s ease-in-out;
+      transform: translateX(-100%);
+    }
+  }
+}
+
+.gallery-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center;
+
+  &.animate {
+    animation: slow-zoom 10s linear infinite alternate;
+  }
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+
+  .js & {
+    display: none;
+  }
+}
+
+.gallery-caption-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-left: 100% - $gallery-caption-width;
+  background-clip: content-box;
+  background-size: cover;
+  background-position: center;
+  filter: url(#svgBlur);
+  filter: blur(3px);
+  transition: all 1s ease-in;
+  opacity: 0;
+
+  &.display {
+    opacity: 1;
+    transition-timing-function: ease-out;
+    // Delay is so the caption shows first before the opacity transition
+    transition-delay: 1s;
+  }
+
+  &.animate {
+    animation: slow-zoom 10s linear infinite alternate;
+  }
+}
+
+.gallery-caption {
+  position: relative;
+  width: $gallery-caption-width;
+  height: 100%;
+  margin-left: auto;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(white, .7);
+  z-index: 1;
+  transform: translateX(100%) translateZ(0);
+  // Delays are to wait the caption background opacity transition
+  transition-delay: 1s;
+  transition: all 1s ease-in;
+
+  &.display {
+    transform: translateX(0) translateZ(0);
+    transition-delay: 0;
+    transition-timing-function: ease-out;
+
+    > * {
+      transform: translateX(0);
+    }
+  }
+
+  > * {
+    transition: all 1s ease-in-out;
+    transform: translateX(5%);
+  }
+
+  > h1 {
+    margin-bottom: 0;
+  }
+}
+
+.gallery-mini-info {
+  position: absolute;
+  bottom: 0;
+  right: 5%;
+  padding: 10px 20px;
+  background: rgba(white, .9);
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  transition: all .3s ease-in-out;
+  transition-delay: 1.5s;
+
+  &.no-display {
+    transition-delay: 0s;
+    transform: translateY(100%);
+  }
+}

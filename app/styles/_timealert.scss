@@ -1,3 +1,21 @@
+// The preloader that gets shown before the data gets fetched from Google Drive
+.timealert-preloader {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: white;
+  opacity: 1;
+  transition: all .7s;
+  z-index: 10;
+
+  &.loaded {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 .timealert {
   display: flex;
   flex-direction: column;

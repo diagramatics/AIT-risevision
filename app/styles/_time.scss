@@ -1,0 +1,15 @@
+.time {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  max-width: 110px;
+  margin: 0 auto;
+  padding: 8px 0;
+  background: black;
+  color: white;
+  border-radius: 2px;
+  text-align: center;
+  z-index: 999;
+  opacity: .8;
+}

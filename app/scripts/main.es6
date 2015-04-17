@@ -1,6 +1,5 @@
 /* jshint devel:true */
-/* global moment */
-/* global countdown */
+/* global moment, countdown */
 'use strict';
 
 
@@ -60,7 +59,7 @@ G_Sheet.sheetEnum = {
   "GALLERY": 1,
   "TIME": 2,
   "ANNOUNCEMENT": 3
-}
+};
 
 class Gallery {
   constructor() {
@@ -207,8 +206,10 @@ class Gallery {
 
 class Time {
   constructor() {
+    let time = moment();
+    $('[data-time]').html(time.format('h:mm:ss a'));
     setInterval(function() {
-      let time = moment();
+      time = moment();
       $('[data-time]').html(time.format('h:mm:ss a'));
     }, 1000);
   }
@@ -219,7 +220,8 @@ class TimeAlert {
     this.el = {
       'countdown': $('#timeAlertCountdown'),
       'svg': $('#timeAlertSvg'),
-      'title': $('#timeAlertTitle')
+      'title': $('#timeAlertTitle'),
+      'preloader': $('#timealertPreloader')
     };
 
     this.times = [];
@@ -262,6 +264,8 @@ class TimeAlert {
     this.countdown = countdown(function(ts) {
       self.update(ts);
     }, nextClass.start);
+    // Add .loaded to preloader to start opacity 1 to 0 on a white bg
+    this.el.preloader.addClass('loaded');
   }
 
   calculateNearestClass() {
@@ -293,10 +297,13 @@ class TimeAlert {
     }
     let time = moment();
     let hours = '';
+    let minutes = ts.minutes;
     if (ts.hours !== 0) {
       hours = ts.hours + ':';
+      // If there's an hour countdown put a leading zero on minute
+      minutes = ('0' + ts.minutes).slice(-2);
     }
-    this.el.countdown.html(hours + ts.minutes + ':' + ('0' + ts.seconds).slice(-2));
+    this.el.countdown.html(hours + minutes + ':' + ('0' + ts.seconds).slice(-2));
   }
 
   clearCountdown() {

@@ -59,6 +59,7 @@ gulp.task('post-html', ['html'], function() {
     .pipe($.inline({
       base: 'dist/'
     }))
+    .pipe($.minifyHtml({conditionals: true, loose: true}))
     .pipe(gulp.dest('dist'));
 });
 

@@ -1,3 +1,6 @@
+- Use Assemble (or anything else) for build system templating
+- Remove Bootstrap as dependency
+
 Additionals:
 - Announcements for SRC
 - Image support for announcements

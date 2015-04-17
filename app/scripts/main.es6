@@ -3,23 +3,66 @@
 /* global countdown */
 'use strict';
 
+
+
+// Google API test code
+
+var CLIENT_ID = '404474158533-ismn9i3l92mjuhnt6ccl8jneggd1n9ru.apps.googleusercontent.com';
+var SCOPES = 'https://www.googleapis.com/auth/drive';
+var googleAPI;
+
+/**
+ * Called when the client library is loaded to start the auth flow.
+ */
+function handleClientLoad() {
+  googleAPI = new GoogleAPI();
+}
+
+class GoogleAPI {
+  constructor() {
+    gapi.client.setApiKey('AIzaSyBRFaPWEEcN7H9EyTqMZqDyJuz43ENHQ8g');
+    window.setTimeout(this.checkAuth, 1);
+  }
+
+  checkAuth() {
+      gapi.auth.authorize({
+        'client_id': CLIENT_ID,
+        'scope': SCOPES,
+        'immediate': true
+      }, this.handleAuthResult);
+  }
+
+  handleAuthResult(authResult) {
+    if (authResult && !authResult.error) {
+      console.log('yay');
+    }
+    else {
+      console.log('nay');
+    }
+  }
+}
+
+// ---------
+
 class Gallery {
   constructor() {
     this.slideDuration = 10000;
     this.images = [
       {
-        'image': '/images/lorem-image.jpg',
+        'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',
         'name': 'Lorem Graphics',
         'author': 'Ipsum',
         'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p>'
       },
       {
-        'image': '/images/lorem-image-2.jpg',
+        'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichSGxfRkhHbGk5Y1E',
         'name': 'Lorem Art',
         'author': 'Lorema',
         'text': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti quo beatae non voluptate, modi facere culpa exercitationem? Cum, laborum, deleniti. Quae sapiente omnis, repellendus.</p><p>Placeat quae doloribus neque cupiditate consequatur reiciendis voluptates deleniti esse, ipsam maiores provident aspernatur blanditiis, culpa quas! Tenetur, recusandae pariatur temporibus minus cupiditate, optio.</p><p>Nesciunt molestiae possimus ea quidem! Cumque delectus provident, itaque at exercitationem quis tenetur iusto minima est atque! Magnam suscipit perspiciatis laboriosam, molestiae sapiente consequuntur!</p>'
       }
     ];
+
+    this.preloadImages();
 
     this.el = {
       'root': $('#gallery'),
@@ -35,20 +78,14 @@ class Gallery {
     this.el.captionBackground.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
 
     this.imageIterator = Math.floor(Math.random() * (this.images.length - 1));
-
-    var dataImage = $('#gallery').attr('data-src');
     this.setSlideView(this.images[this.imageIterator]);
     this.cycleImages();
+  }
 
-    var duplicates = false;
-    for (var i = 0; i < this.images.length; i++) {
-      if (this.images[i].image === dataImage) {
-        duplicates = true;
-        break;
-      }
-    }
-    if (!duplicates) {
-      this.image.push(dataImage);
+  preloadImages() {
+    for (var i = 0; i < this.images; i++) {
+      let image = new Image();
+      image.src(this.images[i]);
     }
   }
 

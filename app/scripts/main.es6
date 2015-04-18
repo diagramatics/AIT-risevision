@@ -1,5 +1,5 @@
 /* jshint devel:true */
-/* global moment, countdown */
+/* global moment, countdown, textFit */
 'use strict';
 
 
@@ -344,6 +344,64 @@ class TimeAlert {
   }
 }
 
+class Announcement {
+  constructor() {
+    this.el = {
+      'root': $('#announcement'),
+      'title': $('#announcementTitle'),
+      'content': $('#announcementContent')
+    };
+
+    this.title = '';
+    this.content = '';
+    this.image = '';
+    let self = this;
+    this.loadData(function(result) {
+      if (result === 'success') {
+        self.loadToContent();
+        self.fitContent();
+      }
+      else {
+        // TODO: Implement an error display
+      }
+    });
+  }
+
+  loadData(after) {
+
+    let self = this;
+    let jsonURL = G_Sheet.assembleJSONUrl('ANNOUNCEMENT');
+    $.getJSON(jsonURL)
+      .done(function(data) {
+        let row = data.feed.entry[0];
+        self.title = row.gsx$title.$t;
+        self.content = (row.gsx$content.$t).replace(/[\n\r]/g, '<br />');
+        self.image = row.gsx$picture.$t;
+        return after('success');
+      })
+      .fail(function(jqxhr, textStatus, error) {
+        return after(error);
+      });
+  }
+
+  loadToContent() {
+    this.el.title.html(this.title);
+    this.el.content.html(this.content);
+  }
+
+  fitContent() {
+    this.el.root.css({
+      'width': $('#announcement').css('width'),
+      'height': $('#announcement').css('height')
+    });
+    textFit(this.el.root[0], {
+      alignHoriz: true,
+      alignVert: true,
+      minFontSize: 14
+    });
+  }
+}
+
 $(function() {
   // Check if there's a gallery and there's exactly only one on the DOM
   if ($('[data-gallery]').length === 1) {
@@ -357,5 +415,9 @@ $(function() {
 
   if ($('[data-time]').length === 1) {
     new Time();
+  }
+
+  if ($('[data-announcement]').length === 1) {
+    new Announcement();
   }
 });

@@ -1,11 +1,16 @@
 .announcement {
   font-size: 2.4rem;
   width: 70%;
+  height: 95vh;
   margin: 0 auto;
+
+  p {
+    margin-bottom: 1em;
+  }
 }
 
 .announcement-title {
-  margin: 1.2em 0;
+  margin: 0 0 .5em;
   font-size: 3em;
   text-align: center;
 }

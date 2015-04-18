@@ -63,6 +63,7 @@ G_Sheet.sheetEnum = {
 
 class Gallery {
   constructor() {
+
     this.slideDuration = 10000;
     // this.images = [
     //   {
@@ -79,7 +80,10 @@ class Gallery {
     //   }
     // ];
     this.images = [];
-    this.loadImagesData();
+    let self = this;
+    this.loadImagesData(function(result) {
+      self.asyncLoadFinished(result);
+    });
 
 
     this.el = {
@@ -92,35 +96,51 @@ class Gallery {
     };
   }
 
-  asyncLoadFinished() {
-    // Preload images
-    this.preloadImages();
+  asyncLoadFinished(result) {
+    // If data fetch was successful
+    if (result === 'success') {
+      // Preload images
+      this.preloadImages();
 
-    // Set the animation length to be the same as the slide duration
-    this.el.background.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
-    this.el.captionBackground.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
+      // Set the animation length to be the same as the slide duration
+      this.el.background.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
+      this.el.captionBackground.css('animation-duration', (this.slideDuration * 4/3) + 'ms');
 
-    this.imageIterator = Math.floor(Math.random() * (this.images.length - 1));
-    this.setSlideView(this.images[this.imageIterator]);
-    this.cycleImages();
+      this.imageIterator = Math.floor(Math.random() * (this.images.length - 1));
+      this.setSlideView(this.images[this.imageIterator]);
+      this.cycleImages();
+    }
+    else {
+      // If not it's an error, throw an error to the display
+      // TODO: Error display
+    }
   }
 
-  loadImagesData() {
+  /**
+   * Load data images from the predefined Google Spreadsheets set on top
+   */
+  loadImagesData(after) {
     let self = this;
     let jsonURL = G_Sheet.assembleJSONUrl('GALLERY');
-    $.getJSON(jsonURL, function(data) {
-      for (var i = 0; i < data.feed.entry.length; i++) {
-        let row = data.feed.entry[i];
-        self.images.push({
-          'image': row.gsx$image.$t,
-          'name': row.gsx$title.$t,
-          'author': row.gsx$author.$t,
-          'text': (row.gsx$content.$t).replace(/[\n\r]/g, '<br />')
-        });
-      }
-
-      self.asyncLoadFinished();
-    });
+    // Fetch the JSON from the URL given from the setting
+    $.getJSON(jsonURL)
+      .done(function(data) {
+        // Push the fetched data to self.images
+        for (var i = 0; i < data.feed.entry.length; i++) {
+          let row = data.feed.entry[i];
+          self.images.push({
+            'image': row.gsx$image.$t,
+            'name': row.gsx$title.$t,
+            'author': row.gsx$author.$t,
+            'text': (row.gsx$content.$t).replace(/[\n\r]/g, '<br />')
+          });
+        }
+        // Run the function passed in
+        return after('success');
+      })
+      .fail(function(jqxhr, textStatus, error) {
+        return after(error);
+      });
   }
 
   preloadImages() {
@@ -225,7 +245,11 @@ class TimeAlert {
     };
 
     this.times = [];
-    this.loadData();
+
+    let self = this;
+    this.loadData(function(result) {
+      self.loadDataFinished(result);
+    });
 
     // var self = this;
     // this.endTime = new Date();
@@ -235,41 +259,50 @@ class TimeAlert {
     // }, this.endTime);
   }
 
-  loadData() {
+  loadData(after) {
     let self = this;
     let jsonURL = G_Sheet.assembleJSONUrl('TIME');
     let today = new Date();
-    $.getJSON(jsonURL, function(data) {
-      for (var i = 0; i < data.feed.entry.length; i++) {
-        let row = data.feed.entry[i];
-        let startTime = (row.gsx$classtimes.$t).split(':', 2);
-        // Set a date with today but with a different time
-        startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startTime[0], startTime[1], 0);
-        let endTime = (row.gsx$endtimes.$t).split(':', 2);
-        endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endTime[0], endTime[1], 0);
+    $.getJSON(jsonURL)
+      .done(function(data) {
+        for (var i = 0; i < data.feed.entry.length; i++) {
+          let row = data.feed.entry[i];
+          let startTime = (row.gsx$classtimes.$t).split(':', 2);
+          // Set a date with today but with a different time
+          startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startTime[0], startTime[1], 0);
+          let endTime = (row.gsx$endtimes.$t).split(':', 2);
+          endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endTime[0], endTime[1], 0);
 
-        self.times.push({
-          'start': startTime,
-          'end': endTime
-        });
-      }
-      // After fetching is finished let's run the post-load function
-      self.loadDataFinished();
-    });
+          self.times.push({
+            'start': startTime,
+            'end': endTime
+          });
+        }
+        // After fetching is finished let's run the post-load function
+        after('success');
+      })
+      .fail(function(jqxhr, textStatus, error) {
+        return after(error);
+      });
   }
 
-  loadDataFinished() {
-    let self = this;
-    let nextClass = this.calculateNearestClass();
-    this.countdown = countdown(function(ts) {
-      self.update(ts);
-    }, nextClass.start);
-    // Add .loaded to preloader to start opacity 1 to 0 on a white bg
-    this.el.preloader.addClass('loaded');
+  loadDataFinished(result) {
+    if (result === 'success') {
+      let self = this;
+      let nextClass = this.calculateNearestClass(new Date());
+      this.countdown = countdown(function(ts) {
+        self.update(ts);
+      }, nextClass.start);
+      // Add .loaded to preloader to start opacity 1 to 0 on a white bg
+      this.el.preloader.addClass('loaded');
+    }
+    else {
+      // Display error in fetching data on display
+      // TODO: Make this
+    }
   }
 
-  calculateNearestClass() {
-    let today = new Date();
+  calculateNearestClass(today) {
     let nextClass = false;
     for (var i = 0; i < this.times.length; i++) {
       // If the next schedule hasn't passed the current time yet

@@ -27,6 +27,7 @@ gulp.task('scripts', function() {
   return gulp.src('app/scripts/**/*.es6')
     .pipe($.sourcemaps.init())
     .pipe($.babel())
+    .on('error', console.error.bind(console, 'Babel error:'))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest('.tmp/scripts'))
     .pipe(reload({stream: true}));

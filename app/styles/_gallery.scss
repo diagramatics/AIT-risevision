@@ -120,6 +120,12 @@ $gallery-caption-width: 30%;
 
   > h1 {
     margin-bottom: 0;
+
+    // Next after h1 should be the gallery author tag
+    + p {
+      font-size: 1.2em;
+      margin-top: 0;
+    }
   }
 }
 

@@ -1,21 +1,3 @@
-// The preloader that gets shown before the data gets fetched from Google Drive
-.timealert-preloader {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: white;
-  opacity: 1;
-  transition: all .7s;
-  z-index: 10;
-
-  &.loaded {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
 .timealert {
   display: flex;
   flex-direction: column;
@@ -32,21 +14,24 @@
 
   &:after {
     // Used to counter the h1's size so flexbox makes the countdown sit at the perfect vertical center
-    content: "a";
+    content: "T";
     font-size: 1.3em;
+    line-height: 1;
     opacity: 0;
     visibility: hidden;
   }
 }
 
-.timealert h1 {
+.timealert-title {
   margin-bottom: 0;
   font-size: 1.3em;
+  font-weight: normal;
   line-height: 1;
 }
 
 .timealert-countdown {
   font-size: 6rem;
+  line-height: 1;
 }
 
 .timealert-svg {

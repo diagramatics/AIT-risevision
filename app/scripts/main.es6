@@ -61,10 +61,35 @@ G_Sheet.sheetEnum = {
   "ANNOUNCEMENT": 3
 };
 
-class Gallery {
+class Time {
   constructor() {
+    let time = moment();
+    let $element = $('[data-time]');
+    $element.html(time.format('h:mm:ss a'));
+    // Return the timer interval so we can manipulate it from other classes
+    return setInterval(function() {
+      time = moment();
+      $element.html(time.format('h:mm:ss a'));
+    }, 1000);
+  }
+}
 
-    this.slideDuration = 10000;
+class Presentation {
+  dataLoaded(result) {
+    if (result === 'success') {
+      $('body').addClass('loaded');
+    }
+    else {
+      $('body').addClass('load-fail');
+    }
+  }
+}
+
+class Gallery extends Presentation {
+  constructor() {
+    super();
+
+    this.slideDuration = 60000;
     // this.images = [
     //   {
     //     'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',
@@ -80,9 +105,8 @@ class Gallery {
     //   }
     // ];
     this.images = [];
-    let self = this;
-    this.loadImagesData(function(result) {
-      self.asyncLoadFinished(result);
+    this.loadData((result) => {
+      this.dataLoaded(result);
     });
 
 
@@ -96,7 +120,7 @@ class Gallery {
     };
   }
 
-  asyncLoadFinished(result) {
+  dataLoaded(result) {
     // If data fetch was successful
     if (result === 'success') {
       // Preload images
@@ -114,25 +138,32 @@ class Gallery {
       // If not it's an error, throw an error to the display
       // TODO: Error display
     }
+
+    super.dataLoaded(result);
   }
 
   /**
    * Load data images from the predefined Google Spreadsheets set on top
    */
-  loadImagesData(after) {
-    let self = this;
+  loadData(after) {
     let jsonURL = G_Sheet.assembleJSONUrl('GALLERY');
     // Fetch the JSON from the URL given from the setting
     $.getJSON(jsonURL)
-      .done(function(data) {
+      .done((data) => {
         // Push the fetched data to self.images
         for (var i = 0; i < data.feed.entry.length; i++) {
           let row = data.feed.entry[i];
-          self.images.push({
+          // Convert the text details content so it's paragraphed
+          let content = row.gsx$content.$t;
+          content = content.replace(/\n{2}/g, '</p><p>');
+          content = content.replace(/\n/g, '<br />');
+          content = '<p>'+content+'</p>';
+          // Now push it on the data containing array
+          this.images.push({
             'image': row.gsx$image.$t,
             'name': row.gsx$title.$t,
             'author': row.gsx$author.$t,
-            'text': (row.gsx$content.$t).replace(/[\n\r]/g, '<br />')
+            'text': content
           });
         }
         // Run the function passed in
@@ -153,37 +184,35 @@ class Gallery {
   }
 
   setSlideView(image) {
-    let self = this;
     this.loadImage(image);
 
     // Set a timer to show the caption
-    setTimeout(function() {
-      self.el.caption.addClass('display');
-      self.el.captionBackground.addClass('display');
-      self.el.miniInfo.addClass('no-display');
-    }, self.slideDuration / 3);
+    setTimeout(() => {
+      this.el.caption.addClass('display');
+      this.el.captionBackground.addClass('display');
+      this.el.miniInfo.addClass('no-display');
+    }, this.slideDuration / 3);
 
     // Another one to hide them at the last 4 seconds
-    setTimeout(function() {
-      self.el.caption.removeClass('display');
-      self.el.captionBackground.removeClass('display');
-      self.el.miniInfo.removeClass('no-display');
-    }, self.slideDuration - 5000);
+    setTimeout(() => {
+      this.el.caption.removeClass('display');
+      this.el.captionBackground.removeClass('display');
+      this.el.miniInfo.removeClass('no-display');
+    }, this.slideDuration - 5000);
 
     // Toggle the loading screen on the last two seconds
-    setTimeout(function() {
-      self.el.root.addClass('loading');
-    }, self.slideDuration - 2000);
+    setTimeout(() => {
+      this.el.root.addClass('loading');
+    }, this.slideDuration - 2000);
   }
 
   cycleImages() {
-    let self = this;
-    setInterval(function() {
-      if (++self.imageIterator > self.images.length - 1) {
+    setInterval(() => {
+      if (++this.imageIterator > this.images.length - 1) {
         // Reset back to the first array if cycled past the last one
-        self.imageIterator = 0;
+        this.imageIterator = 0;
       }
-      self.setSlideView(self.images[self.imageIterator]);
+      this.setSlideView(this.images[this.imageIterator]);
     }, this.slideDuration);
   }
 
@@ -196,7 +225,6 @@ class Gallery {
   }
 
   loadImage(image) {
-    let self = this;
     let imageFormatted = 'url('+ image.image +')';
     // Disable animation and enable loading screen
     this.el.background.removeClass('animate');
@@ -210,45 +238,33 @@ class Gallery {
     this.el.miniInfo.html(this.formatMiniInfo(image));
 
     // Remove loading screen and enable animation again
-    setTimeout(function() {
-      self.el.background.addClass('animate');
-      self.el.captionBackground.addClass('animate');
-      self.el.root.removeClass('loading').addClass('loaded');
+    setTimeout(() => {
+      this.el.background.addClass('animate');
+      this.el.captionBackground.addClass('animate');
+      this.el.root.removeClass('loading').addClass('loaded');
     }, 500);
 
     // Last animations for loading screen
-    setTimeout(function() {
-      self.el.root.removeClass('loaded');
+    setTimeout(() => {
+      this.el.root.removeClass('loaded');
     }, this.slideDuration / 2);
   }
 
 }
 
-class Time {
+class TimeAlert extends Presentation {
   constructor() {
-    let time = moment();
-    $('[data-time]').html(time.format('h:mm:ss a'));
-    setInterval(function() {
-      time = moment();
-      $('[data-time]').html(time.format('h:mm:ss a'));
-    }, 1000);
-  }
-}
-
-class TimeAlert {
-  constructor() {
+    super();
     this.el = {
       'countdown': $('#timeAlertCountdown'),
       'svg': $('#timeAlertSvg'),
       'title': $('#timeAlertTitle'),
-      'preloader': $('#timealertPreloader')
     };
 
     this.times = [];
 
-    let self = this;
-    this.loadData(function(result) {
-      self.loadDataFinished(result);
+    this.loadData((result) => {
+      this.dataLoaded(result);
     });
 
     // var self = this;
@@ -260,11 +276,10 @@ class TimeAlert {
   }
 
   loadData(after) {
-    let self = this;
     let jsonURL = G_Sheet.assembleJSONUrl('TIME');
     let today = new Date();
     $.getJSON(jsonURL)
-      .done(function(data) {
+      .done((data) => {
         for (var i = 0; i < data.feed.entry.length; i++) {
           let row = data.feed.entry[i];
           let startTime = (row.gsx$classtimes.$t).split(':', 2);
@@ -273,7 +288,7 @@ class TimeAlert {
           let endTime = (row.gsx$endtimes.$t).split(':', 2);
           endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endTime[0], endTime[1], 0);
 
-          self.times.push({
+          this.times.push({
             'start': startTime,
             'end': endTime
           });
@@ -286,25 +301,25 @@ class TimeAlert {
       });
   }
 
-  loadDataFinished(result) {
+  dataLoaded(result) {
     if (result === 'success') {
-      let self = this;
       let nextClass = this.calculateNearestClass(new Date());
-      this.countdown = countdown(function(ts) {
-        self.update(ts);
+      this.countdown = countdown((ts) => {
+        this.update(ts);
       }, nextClass.start);
       // Add .loaded to preloader to start opacity 1 to 0 on a white bg
-      this.el.preloader.addClass('loaded');
     }
     else {
       // Display error in fetching data on display
       // TODO: Make this
     }
+
+    super.dataLoaded(result);
   }
 
   calculateNearestClass(today) {
     let nextClass = false;
-    for (var i = 0; i < this.times.length; i++) {
+    for (let i = 0; i < this.times.length; i++) {
       // If the next schedule hasn't passed the current time yet
       if (today < this.times[i].start) {
         // Break the loop and return that class
@@ -344,8 +359,9 @@ class TimeAlert {
   }
 }
 
-class Announcement {
+class Announcement extends Presentation {
   constructor() {
+    super();
     this.el = {
       'root': $('#announcement'),
       'title': $('#announcementTitle'),
@@ -356,27 +372,28 @@ class Announcement {
     this.content = '';
     this.image = '';
     let self = this;
-    this.loadData(function(result) {
-      if (result === 'success') {
-        self.loadToContent();
-        self.fitContent();
-      }
-      else {
-        // TODO: Implement an error display
-      }
+
+    // Lexical this! ES6 FTW
+    this.loadData((result) => {
+      this.dataLoaded(result);
     });
   }
 
   loadData(after) {
 
-    let self = this;
     let jsonURL = G_Sheet.assembleJSONUrl('ANNOUNCEMENT');
     $.getJSON(jsonURL)
-      .done(function(data) {
+      .done((data) => {
         let row = data.feed.entry[0];
-        self.title = row.gsx$title.$t;
-        self.content = (row.gsx$content.$t).replace(/[\n\r]/g, '<br />');
-        self.image = row.gsx$picture.$t;
+        // Convert the text details content so it's paragraphed
+        let content = row.gsx$content.$t;
+        content = content.replace(/\n{2}/g, '</p><p>');
+        content = content.replace(/\n/g, '<br />');
+        content = '<p>'+content+'</p>';
+
+        this.title = row.gsx$title.$t;
+        this.content = content;
+        this.image = row.gsx$picture.$t;
         return after('success');
       })
       .fail(function(jqxhr, textStatus, error) {
@@ -384,7 +401,7 @@ class Announcement {
       });
   }
 
-  loadToContent() {
+  loadToView() {
     this.el.title.html(this.title);
     this.el.content.html(this.content);
   }
@@ -397,8 +414,20 @@ class Announcement {
     textFit(this.el.root[0], {
       alignHoriz: true,
       alignVert: true,
-      minFontSize: 14
+      minFontSize: 14,
+      maxFontSize: 36
     });
+  }
+
+  dataLoaded(result) {
+    if (result === 'success') {
+      this.loadToView();
+      this.fitContent();
+    }
+    else {
+      // TODO: Implement an error display
+    }
+    super.dataLoaded(result);
   }
 }
 

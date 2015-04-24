@@ -9,6 +9,7 @@ $gallery-caption-width: 30%;
   }
 
   &:after {
+    display: none; // TODO: Debugging
     content: "";
     position: absolute;
     top: 0;
@@ -24,14 +25,14 @@ $gallery-caption-width: 30%;
 
   &.loading {
     &:after {
-      transition: all 2s ease-in-out;
+      // transition: all 2s ease-in-out;
       transform: translateX(0)
     }
   }
 
   &.loaded {
     &:after {
-      transition: all 2s ease-in-out;
+      // transition: all 2s ease-in-out;
       transform: translateX(-100%);
     }
   }
@@ -47,7 +48,7 @@ $gallery-caption-width: 30%;
   background-position: center;
 
   &.animate {
-    animation: slow-zoom 10s linear infinite alternate;
+    // animation: slow-zoom 10s linear infinite alternate;
   }
 }
 
@@ -61,6 +62,7 @@ $gallery-caption-width: 30%;
 }
 
 .gallery-caption-background {
+  display: none; // TODO: Temporary
   position: absolute;
   top: 0;
   right: 0;
@@ -72,10 +74,10 @@ $gallery-caption-width: 30%;
   background-position: center;
   filter: url(#svgBlur);
   filter: blur(3px);
-  transition: all 1s ease-in;
+  // transition: all 1s ease-in;
   opacity: 0;
 
-  &.display {
+  .gallery.caption & {
     opacity: 1;
     transition-timing-function: ease-out;
     // Delay is so the caption shows first before the opacity transition
@@ -83,39 +85,31 @@ $gallery-caption-width: 30%;
   }
 
   &.animate {
-    animation: slow-zoom 10s linear infinite alternate;
+    // animation: slow-zoom 10s linear infinite alternate;
   }
 }
 
 .gallery-caption {
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
   width: $gallery-caption-width;
-  height: 100%;
-  margin-left: auto;
   padding: 2%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: rgba(white, .7);
-  z-index: 1;
-  transform: translateX(100%) translateZ(0);
+  // z-index: 1;
+  transform: translateX(100%);
   // Delays are to wait the caption background opacity transition
-  transition-delay: 1s;
-  transition: all 1s ease-in;
+  // transition-delay: 1s;
+  // transition: all 1s ease-in;
 
-  &.display {
-    transform: translateX(0) translateZ(0);
+  .gallery.caption & {
+    transform: translateX(0);
     transition-delay: 0;
     transition-timing-function: ease-out;
-
-    > * {
-      transform: translateX(0);
-    }
-  }
-
-  > * {
-    transition: all 1s ease-in-out;
-    transform: translateX(5%);
   }
 
   > h1 {
@@ -137,11 +131,11 @@ $gallery-caption-width: 30%;
   background: rgba(white, .9);
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
-  transition: all .3s ease-in-out;
-  transition-delay: 1.5s;
+  // transition: all .3s ease-in-out;
+  // transition-delay: 1.5s;
 
-  &.no-display {
-    transition-delay: 0s;
+  .gallery.caption & {
+    transition-delay: 0;
     transform: translateY(100%);
   }
 }

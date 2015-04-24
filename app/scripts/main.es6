@@ -1,5 +1,5 @@
 /* jshint devel:true */
-/* global moment, countdown, textFit */
+/* global moment, countdown, textFit, TweenMax */
 'use strict';
 
 
@@ -63,14 +63,18 @@ G_Sheet.sheetEnum = {
 
 class Time {
   constructor() {
-    let time = moment();
+    let time = this.getTime();
     let $element = $('[data-time]');
     $element.html(time.format('h:mm:ss a'));
     // Return the timer interval so we can manipulate it from other classes
-    return setInterval(function() {
-      time = moment();
+    return setInterval(() => {
+      time = this.getTime();
       $element.html(time.format('h:mm:ss a'));
     }, 1000);
+  }
+
+  getTime() {
+    return moment().tz("Australia/Sydney");
   }
 }
 
@@ -89,7 +93,7 @@ class Gallery extends Presentation {
   constructor() {
     super();
 
-    this.slideDuration = 60000;
+    this.slideDuration = 10000;
     // this.images = [
     //   {
     //     'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',
@@ -188,16 +192,22 @@ class Gallery extends Presentation {
 
     // Set a timer to show the caption
     setTimeout(() => {
-      this.el.caption.addClass('display');
-      this.el.captionBackground.addClass('display');
-      this.el.miniInfo.addClass('no-display');
+      this.el.root.addClass('caption');
+      // TweenMax.to(this.el.caption, 1, {x: 0});
+
+      // this.el.caption.addClass('display');
+      // this.el.captionBackground.addClass('display');
+      // this.el.miniInfo.addClass('no-display');
     }, this.slideDuration / 3);
 
     // Another one to hide them at the last 4 seconds
     setTimeout(() => {
-      this.el.caption.removeClass('display');
-      this.el.captionBackground.removeClass('display');
-      this.el.miniInfo.removeClass('no-display');
+      this.el.root.removeClass('caption');
+      // TweenMax.to(this.el.caption, 1, {x: this.el.caption.outerWidth()});
+
+      // this.el.caption.removeClass('display');
+      // this.el.captionBackground.removeClass('display');
+      // this.el.miniInfo.removeClass('no-display');
     }, this.slideDuration - 5000);
 
     // Toggle the loading screen on the last two seconds
@@ -225,6 +235,9 @@ class Gallery extends Presentation {
   }
 
   loadImage(image) {
+    // TODO: Optimize this so browser reflow is down to a minimum
+    // Maybe do everything in a non-displayed DOM or a hidden element before
+    // committing the changes to be displayed
     let imageFormatted = 'url('+ image.image +')';
     // Disable animation and enable loading screen
     this.el.background.removeClass('animate');

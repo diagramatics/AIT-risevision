@@ -11,6 +11,10 @@
 @import "timealert";
 @import "announcement";
 
+html {
+  height: 100%; // Fallback for older Android inbuilt browsers
+}
+
 body {
   // Considering this will only be rolled out on static screens, this is okay.
   overflow: hidden;
@@ -38,6 +42,11 @@ body {
 
   &.loadfail:after {
     content: "Loading failed.";
+  }
+
+  &.testing:after {
+    content: "We will be right back after this break.";
+    opacity: 1 !important;
   }
 }
 

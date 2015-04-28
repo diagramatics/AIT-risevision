@@ -4,6 +4,7 @@
   align-items: center;
   position: relative;
   justify-content: center;
+  height: 100%;
   height: 100vh;
   color: white;
   text-align: center;
@@ -11,6 +12,7 @@
 
 .timealert-inner {
   position: relative;
+  padding: 10%;
 
   &:after {
     // Used to counter the h1's size so flexbox makes the countdown sit at the perfect vertical center
@@ -27,22 +29,23 @@
   font-size: 1.3em;
   font-weight: normal;
   line-height: 1;
+  opacity: 0;
 }
 
 .timealert-countdown {
   font-size: 6rem;
   line-height: 1;
+  opacity: 0;
 }
 
 .timealert-svg {
   position: absolute;
   top: 0;
-  left: -60px;
+  left: 0;
   bottom: 0;
   right: 0;
-  margin: auto -60px;
-  padding: 0 60px;
+  margin: auto;
   z-index: -1;
   transition: all .3s ease-in-out;
-  animation: breathe ease-in-out 10s infinite alternate;
+  //animation: breathe ease-in-out 10s infinite alternate;
 }

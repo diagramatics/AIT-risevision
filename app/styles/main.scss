@@ -5,17 +5,21 @@
 @import "default/default";
 
 // Specific pages
+@import "variables";
 @import "animations";
 @import "time";
 @import "gallery";
 @import "timealert";
 @import "announcement";
 
+
 html {
   height: 100%; // Fallback for older Android inbuilt browsers
 }
 
 body {
+  // For some reason the RiseVision player renders the page as a black page.
+  background: white;
   // Considering this will only be rolled out on static screens, this is okay.
   overflow: hidden;
 

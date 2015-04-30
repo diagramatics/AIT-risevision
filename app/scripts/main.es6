@@ -46,7 +46,7 @@ class G_Sheet {
   }
 
   static assembleJSONUrl(enumName) {
-    return 'https://cors-io.herokuapp.com/spreadsheets.google.com/feeds/list/'+ this.sheetID +'/'+ this.sheetEnum[enumName] +'/public/values?alt=json';
+    return 'https://spreadsheets.google.com/feeds/list/'+ this.sheetID +'/'+ this.sheetEnum[enumName] +'/public/values?alt=json';
   }
 }
 // ID is the ID from the URL of Google Sheet

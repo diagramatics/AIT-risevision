@@ -38,6 +38,7 @@ body {
     opacity: 1;
     transition: all .2s ease-in-out;
     z-index: 1;
+    pointer-events: none;
   }
 
   &.loaded:after {

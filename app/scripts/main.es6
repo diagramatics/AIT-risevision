@@ -443,6 +443,13 @@ class Announcement extends Presentation {
   }
 }
 
+class Dashboard extends Presentation {
+  constructor() {
+    super();
+    this.dataLoaded('success');
+  }
+}
+
 $(function() {
   // Check if there's a gallery and there's exactly only one on the DOM
   if ($('[data-gallery]').length === 1) {
@@ -460,5 +467,9 @@ $(function() {
 
   if ($('[data-announcement]').length === 1) {
     new Announcement();
+  }
+
+  if ($('[data-dashboard]').length === 1) {
+    new Dashboard();
   }
 });

@@ -392,6 +392,7 @@ class Announcement extends Presentation {
   }
 
   loadData(after) {
+    let self = this;
 
     let jsonURL = G_Sheet.assembleJSONUrl('ANNOUNCEMENT');
     $.getJSON(jsonURL)
@@ -403,9 +404,13 @@ class Announcement extends Presentation {
         content = content.replace(/\n/g, '<br />');
         content = '<p>'+content+'</p>';
 
-        this.title = row.gsx$title.$t;
-        this.content = content;
-        this.image = row.gsx$picture.$t;
+        self.title = row.gsx$title.$t;
+        self.content = content;
+        self.image = row.gsx$picture.$t;
+        // Query again every 30 minutes
+        setTimeout(() => {
+          this.loadData(after);
+        }, 900000);
         return after('success');
       })
       .fail(function(jqxhr, textStatus, error) {
@@ -414,8 +419,11 @@ class Announcement extends Presentation {
   }
 
   loadToView() {
-    this.el.title.html(this.title);
-    this.el.content.html(this.content);
+    // Every time the content is changed the cached variable (this.el.*) gets
+    // unreferenced. Reference the current, changed ones and overwrite the
+    // object again.
+    this.el.title = this.el.title.html(this.title);
+    this.el.content = this.el.content.html(this.content);
   }
 
   fitContent() {

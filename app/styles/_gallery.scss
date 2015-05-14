@@ -48,7 +48,7 @@ $gallery-caption-width: 30%;
   background-position: center;
 
   &.animate {
-    // animation: slow-zoom 10s linear infinite alternate;
+    animation: slow-zoom 10s linear infinite alternate;
   }
 }
 
@@ -85,7 +85,7 @@ $gallery-caption-width: 30%;
   }
 
   &.animate {
-    // animation: slow-zoom 10s linear infinite alternate;
+    animation: slow-zoom 10s linear infinite alternate;
   }
 }
 
@@ -103,8 +103,8 @@ $gallery-caption-width: 30%;
   // z-index: 1;
   transform: translateX(100%);
   // Delays are to wait the caption background opacity transition
-  // transition-delay: 1s;
-  // transition: all 1s ease-in;
+  transition-delay: 1s;
+  transition: all 1s ease-in;
 
   .gallery.caption & {
     transform: translateX(0);
@@ -131,8 +131,8 @@ $gallery-caption-width: 30%;
   background: rgba(white, .9);
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
-  // transition: all .3s ease-in-out;
-  // transition-delay: 1.5s;
+  transition: all .3s ease-in-out;
+  transition-delay: 1.5s;
 
   .gallery.caption & {
     transition-delay: 0;

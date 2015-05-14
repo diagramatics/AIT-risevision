@@ -63,13 +63,21 @@ G_Sheet.sheetEnum = {
 class Time {
   constructor() {
     let time = this.getTime();
-    let $element = $('[data-time]');
-    $element.html(time.format('h:mm:ss a'));
+
+    this.$element = $('[data-time]');
+    this.$element.html(time.format('h:mm:ss a'));
     // Return the timer interval so we can manipulate it from other classes
-    return setInterval(() => {
-      time = this.getTime();
-      $element.html(time.format('h:mm:ss a'));
-    }, 1000);
+
+    this.updateTime(time);
+  }
+
+  updateTime(oldTime) {
+    return setTimeout(() => {
+      let time = this.getTime();
+      console.log(time.format('x'));
+      this.$element.html(time.format('h:mm:ss a'));
+      this.updateTime(time);
+    }, 1000 - (oldTime.format('x')).slice(-3))
   }
 
   getTime() {

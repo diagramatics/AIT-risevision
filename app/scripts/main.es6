@@ -41,24 +41,48 @@
 //   }
 // }
 // ---------
+window.hello = function() {
+  console.log('hello');
+}
 class G_Sheet {
-  constructor() {
+  constructor() {}
+  /**
+    * Initialize the Google Sheet class
+    * @param after The function to call next
+    **/
+  static initialize(after = function() {}) {
+    // Set the worksheet ID
+    this.sheetID = '1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw';
+    // Get the list of worksheets and put them on an enum
+    this.sheetEnum = {};
+    $.getJSON('http://crossorigin.me/https://spreadsheets.google.com/feeds/worksheets/'+ this.sheetID +'/public/values?alt=json')
+      .done((data) => {
+        // Push the fetched data to the sheetEnum object
+        for (let i = 0; i < data.feed.entry.length; i++) {
+          let row = data.feed.entry[i];
+          this.sheetEnum[(row.title.$t).toUpperCase()] = i+1;
+        }
+        after();
+      })
+      .fail(function(jqxhr, textStatus, error) {
+        //throw error;
+      });
   }
 
-  static assembleJSONUrl(enumName) {
-    return 'https://spreadsheets.google.com/feeds/list/'+ this.sheetID +'/'+ this.sheetEnum[enumName] +'/public/values?alt=json';
+  static assembleJSONUrl(enumName, type = 'list') {
+    return 'http://crossorigin.me/https://spreadsheets.google.com/feeds/'+ type +'/'+ this.sheetID +'/'+ this.sheetEnum[enumName] +'/public/values?alt=json';
   }
+
+  // ID is the ID from the URL of Google Sheet
+  // The URL to open the Sheet is https://docs.google.com/a/ait.nsw.edu.au/spreadsheets/d/1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw/
+  // Last part of the URL is the ID
+  // This enum is used for the positional ID of the spreadsheet
+  // static sheetEnum = {
+  //   "GALLERY": 1,
+  //   "TIME": 2,
+  //   "ANNOUNCEMENT": 3
+  // };
 }
-// ID is the ID from the URL of Google Sheet
-// The URL to open the Sheet is https://docs.google.com/a/ait.nsw.edu.au/spreadsheets/d/1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw/
-// Last part of the URL is the ID
-G_Sheet.sheetID = '1OmNdBJjC71iyXzih4YTBdlxzDwCEjBkac8oW6kJBYIw';
-// This enum is used for the positional ID of the spreadsheet
-G_Sheet.sheetEnum = {
-  "GALLERY": 1,
-  "TIME": 2,
-  "ANNOUNCEMENT": 3
-};
 
 class Time {
   constructor() {
@@ -74,7 +98,6 @@ class Time {
   updateTime(oldTime) {
     return setTimeout(() => {
       let time = this.getTime();
-      console.log(time.format('x'));
       this.$element.html(time.format('h:mm:ss a'));
       this.updateTime(time);
     }, 1000 - (oldTime.format('x')).slice(-3))
@@ -467,25 +490,30 @@ class Dashboard extends Presentation {
 }
 
 $(function() {
-  // Check if there's a gallery and there's exactly only one on the DOM
-  if ($('[data-gallery]').length === 1) {
-    // Initialize the gallery
-    new Gallery();
-  }
+  // Initialize the Google Sheet class
+  G_Sheet.initialize(function() {
+    // When data is loaded do these
 
-  if ($('[data-timealert]').length === 1) {
-    new TimeAlert();
-  }
+    // Check if there's a gallery and there's exactly only one on the DOM
+    if ($('[data-gallery]').length === 1) {
+      // Initialize the gallery
+      new Gallery();
+    }
 
-  if ($('[data-time]').length === 1) {
-    new Time();
-  }
+    if ($('[data-timealert]').length === 1) {
+      new TimeAlert();
+    }
 
-  if ($('[data-announcement]').length === 1) {
-    new Announcement();
-  }
+    if ($('[data-time]').length === 1) {
+      new Time();
+    }
 
-  if ($('[data-dashboard]').length === 1) {
-    new Dashboard();
-  }
+    if ($('[data-announcement]').length === 1) {
+      new Announcement();
+    }
+
+    if ($('[data-dashboard]').length === 1) {
+      new Dashboard();
+    }
+  });
 });

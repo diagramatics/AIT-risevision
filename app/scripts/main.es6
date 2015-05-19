@@ -489,6 +489,10 @@ class Dashboard extends Presentation {
   }
 }
 
+class EventTimetable extends Presentation {
+  
+}
+
 $(function() {
   // Initialize the Google Sheet class
   G_Sheet.initialize(function() {

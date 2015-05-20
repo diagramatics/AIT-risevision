@@ -540,10 +540,13 @@ class EventTimetable extends Presentation {
     super();
 
     this.schedule = [];
+    this.message = '';
 
     this.el = {
-      'root': $('.event-timetable'),
-      'entry': $('.event-timetable-entry')
+      'root': $('#eventTimetable'),
+      'message': $('#eventTimetableMessage'),
+      'entries': $('#eventTimetableEntries'),
+      'entryTemplate': $('#eventTimetableEntryTemplate')
     }
 
     this.loadData((result) => {
@@ -552,8 +555,10 @@ class EventTimetable extends Presentation {
   }
 
   resetContent() {
-    this.el.root.empty().append(this.el.entry);
+    this.el.message.empty();
+    this.el.entries.empty().append(this.el.entry);
     this.schedule = [];
+    this.message = '';
   }
 
   loadData(after) {
@@ -562,7 +567,12 @@ class EventTimetable extends Presentation {
         for (var i = 0; i < data.feed.entry.length; i++) {
           let row = data.feed.entry[i];
 
-          let title = (row.gsx$schedulename.$t);
+          // Get the message if it's not empty
+          // This is because we're parsing every row on the spreadsheet and
+          // some are empty
+          this.message = row.gsx$message.$t !== '' ? row.gsx$message.$t : this.message;
+
+          let title = row.gsx$schedulename.$t;
 
           let startTime = (row.gsx$starttimes.$t).split(':', 2);
           // Set a date with today but with a different time
@@ -586,14 +596,20 @@ class EventTimetable extends Presentation {
   }
 
   getTemplate() {
-    return this.el.entry;
+    return this.el.entryTemplate.attr('id', '');
   }
 
-  insertContent(content, template = this.getTemplate()) {
-    let newElement = template.appendTo(this.el.root);
+  insertContent(content, template = this.getTemplate(), currentTime = moment()) {
+    let newElement = template.appendTo(this.el.entries);
     let $title = $('.event-timetable-entry-title', newElement);
     let $start = $('.event-timetable-entry-start', newElement);
     let $end = $('.event-timetable-entry-end', newElement);
+
+    // If the scheduled content is starting and hasn't ended yet,
+    // add a class to change style
+    if (currentTime >= content.start && currentTime < content.end) {
+      newElement.addClass('-ongoing');
+    }
 
     $title.append(content.title);
     $start.append(content.start.format('HH:mm'));
@@ -602,14 +618,51 @@ class EventTimetable extends Presentation {
 
   dataLoaded(result) {
     if (result === 'success') {
+      // Update the message (MOTD)
+      this.el.message.text(this.message);
+      // Now add the timetable entries
       let template = this.getTemplate();
+      let now = moment();
       for (var i = 0; i < this.schedule.length; i++) {
-        this.insertContent(this.schedule[i], template.clone());
+        this.insertContent(this.schedule[i], template.clone(), now);
       }
       // After content insertion remove the template
       template.remove();
+
+      // And start a timer to real time update which class are starting,
+      // ongoing, and finished.
+      setTimeout(() => {
+        this.updateEventAvailability($('.event-timetable-entry'));
+      }, 60000 - now.seconds() * 1000 - now.milliseconds());
+      // This is to match the timeout so it triggers at the exact minute
     }
     super.dataLoaded(result);
+  }
+
+  updateEventAvailability(entries) {
+    let now = moment();
+    // Check if any classes are starting
+    entries.each(function(index) {
+      let startTime = moment($('.event-timetable-entry-start', this).text(), 'HH:mm');
+      // We don't need to compare the endTime since this is done on a periodical
+      // basis and there won't be any occurences when the timer is suddenly
+      // past a class
+      if (now >= startTime) {
+        $(this).addClass('-ongoing');
+
+        // Skip a check if the element has the -ongoing class and use the time
+        // This also acts as a backup if the preliminary conditional without the
+        // endTime check suddenly checks past a class
+        let endTime = moment($('.event-timetable-entry-end', this).text(), 'HH:mm');
+        if (now > endTime) {
+          $(this).removeClass('-ongoing');
+        }
+      }
+    });
+
+    setTimeout(() => {
+      this.updateEventAvailability(entries);
+    }, 60000 - moment().milliseconds); // Timeout should trigger as precise as possible
   }
 }
 
@@ -617,6 +670,10 @@ $(function() {
   // Initialize the Google Sheet class
   G_Sheet.initialize(function() {
     // When data is loaded do these
+
+    if ($('[data-time]').length === 1) {
+      new Time();
+    }
 
     // Check if there's a gallery and there's exactly only one on the DOM
     if ($('[data-gallery]').length === 1) {
@@ -626,10 +683,6 @@ $(function() {
 
     if ($('[data-timealert]').length === 1) {
       new TimeAlert();
-    }
-
-    if ($('[data-time]').length === 1) {
-      new Time();
     }
 
     if ($('[data-announcement]').length === 1) {

@@ -1,22 +1,45 @@
 .event-timetable {
-  display: flex;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.event-timetable-message {
+  flex: 0 1 auto;
+  padding: .5em 0;
+  font-size: 5vmin;
+  text-align: center;
+}
+
+.event-timetable-entries {
+  flex: 2 1;
+  display: flex;
   flex-flow: column wrap;
+  align-content: center;
+  padding-bottom: 1rem; // Just to offset the content so the time won't block it
 }
 
 .event-timetable-entry {
-  flex: 1 0;
+  flex: 0 1 65px;
   display: flex;
+  align-items: center;
   min-width: 50%;
-  padding: 2em 0;
-  text-align: center;
-  font-size: 3rem;
+  font-size: 4vmin;
+  transition: all .2s ease-in-out;
 
   > div {
-    flex: 1 1;
+    flex: 0 1 auto;
+    padding: 0 1em;
   }
 
   > .event-timetable-entry-title {
-    flex-grow: 1.5;
+    flex-grow: 2;
+    flex-basis: 0%;
+  }
+
+  &.-ongoing {
+    background: $ait-color-blue;
+    color: white;
   }
 }

@@ -41,9 +41,6 @@
 //   }
 // }
 // ---------
-window.hello = function() {
-  console.log('hello');
-}
 class G_Sheet {
   constructor() {}
   /**

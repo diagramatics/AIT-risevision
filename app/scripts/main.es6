@@ -469,7 +469,6 @@ class Announcement extends Presentation {
 
   resetContent() {
     // Remove the contents of the title and the content
-    // TODO: Not working. Cached content issue on the DOM?
     this.el.title.empty();
     this.el.content.empty();
   }
@@ -499,8 +498,8 @@ class Announcement extends Presentation {
     // Every time the content is changed the cached variable (this.el.*) gets
     // unreferenced. Reference the current, changed ones and overwrite the
     // object again.
-    this.el.title = this.el.title.html(this.title);
-    this.el.content = this.el.content.html(this.content);
+    this.el.title.html(this.title);
+    this.el.content.html(this.content);
   }
 
   fitContent() {
@@ -514,6 +513,11 @@ class Announcement extends Presentation {
       minFontSize: 14,
       maxFontSize: 36
     });
+
+    // After using textFit the DOM gets manipulated that the saved element
+    // doesn't exist anymore. Replace the reference
+    this.el.title = $('#announcementTitle');
+    this.el.content = $('#announcementContent');
   }
 
   dataLoaded(result) {

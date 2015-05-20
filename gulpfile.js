@@ -5,6 +5,9 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var browserify = require('browserify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
 
 gulp.task('styles', function () {
   return gulp.src('app/styles/main.scss')
@@ -24,11 +27,14 @@ gulp.task('styles', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src('app/scripts/**/*.es6')
-    .pipe($.sourcemaps.init())
-    .pipe($.babel())
-    .on('error', console.error.bind(console, 'Babel error:'))
-    .pipe($.sourcemaps.write())
+  return browserify({
+    entries: './app/scripts/main.js',
+    debug: true
+  })
+    .transform(babelify)
+    .bundle()
+    .on('error', console.error.bind(console, 'Browserify error:'))
+    .pipe(source('main.js'))
     .pipe(gulp.dest('.tmp/scripts'))
     .pipe(reload({stream: true}));
 });
@@ -107,7 +113,7 @@ gulp.task('serve', ['styles', 'scripts'], function () {
   ]).on('change', reload);
 
   gulp.watch('app/styles/**/*.scss', ['styles']);
-  gulp.watch('app/scripts/**/*.es6', ['scripts']);
+  gulp.watch('app/scripts/**/*.js', ['scripts']);
   gulp.watch('bower.json', ['wiredep']);
 });
 

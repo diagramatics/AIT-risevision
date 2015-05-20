@@ -5,10 +5,11 @@
   },
   "devDependencies": {
     "autoprefixer-core": "^4.0.2",
+    "babelify": "^6.1.1",
     "browser-sync": "^2.6.4",
+    "browserify": "^10.2.1",
     "del": "^1.1.1",
     "gulp": "^3.6.0",
-    "gulp-babel": "^5.1.0",
     "gulp-cache": "^0.2.2",
     "gulp-csso": "^0.2.6",
     "gulp-if": "^1.2.1",
@@ -26,6 +27,7 @@
     "jshint-stylish": "^1.0.0",
     "main-bower-files": "^2.5.0",
     "opn": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "wiredep": "^2.0.0"
   }
 }

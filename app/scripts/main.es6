@@ -1,5 +1,5 @@
 /* jshint devel:true */
-/* global moment, countdown, textFit, TweenMax */
+/* global moment, countdown, textFit */
 'use strict';
 
 
@@ -60,7 +60,8 @@ class G_Sheet {
         // Push the fetched data to the sheetEnum object
         for (let i = 0; i < data.feed.entry.length; i++) {
           let row = data.feed.entry[i];
-          this.sheetEnum[(row.title.$t).toUpperCase()] = i+1;
+          let enumName = ((row.title.$t).toUpperCase()).replace(/ /g, ''); // Uppercase and remove spaces
+          this.sheetEnum[enumName] = i+1;
         }
         after();
       })
@@ -109,6 +110,16 @@ class Time {
 }
 
 class Presentation {
+  constructor() {
+    // Add a listener to the keypress 'R' to reload the page
+    this.keypressWait = false;
+    $(document).on('keypress', (event) => {
+      if (event.keyCode === 114 && this.keypressWait === false) {
+        this.keypressWait = true;
+        this.reloadContent();
+      }
+    });
+  }
   dataLoaded(result) {
     if (result === 'success') {
       $('body').addClass('loaded');
@@ -117,6 +128,19 @@ class Presentation {
       $('body').addClass('load-fail');
     }
   }
+
+  reloadContent() {
+    // Remove the loaded state of the Presentation
+    $('body').removeClass('loaded load-fail');
+    // Call the reset content implemented on the subclasses
+    this.resetContent();
+    // Then load the data again
+    this.loadData((result) => {
+      this.dataLoaded(result);
+      this.keypressWait = false;
+    });
+  }
+
 }
 
 class Gallery extends Presentation {
@@ -152,6 +176,21 @@ class Gallery extends Presentation {
       'caption': $('#galleryCaption'),
       'miniInfo': $('#galleryMiniInfo')
     };
+
+    this.imageCycler = null;
+    this.slideViewTimeouts = [];
+  }
+
+  resetContent() {
+    // Remove all images from data
+    this.images = [];
+    // Stop the image cycler and the timeouts for the animations
+    clearInterval(this.imageCycler);
+    for (var i = 0; i < this.slideViewTimeouts.length; i++) {
+      clearTimeout(this.slideViewTimeouts[i]);
+    }
+    // Reset gallery state to the initial
+    this.el.root.removeClass('caption loading');
   }
 
   dataLoaded(result) {
@@ -166,7 +205,7 @@ class Gallery extends Presentation {
 
       this.imageIterator = Math.floor(Math.random() * (this.images.length - 1));
       this.setSlideView(this.images[this.imageIterator]);
-      this.cycleImages();
+      this.imageCycler = this.cycleImages();
     }
     else {
       // If not it's an error, throw an error to the display
@@ -218,36 +257,38 @@ class Gallery extends Presentation {
   }
 
   setSlideView(image) {
+    // Reset the timeout arrays
+    this.slideViewTimeouts = [];
+
+    // Load the image
     this.loadImage(image);
 
     // Set a timer to show the caption
-    setTimeout(() => {
+    this.slideViewTimeouts.push(setTimeout(() => {
       this.el.root.addClass('caption');
-      // TweenMax.to(this.el.caption, 1, {x: 0});
 
       // this.el.caption.addClass('display');
       // this.el.captionBackground.addClass('display');
       // this.el.miniInfo.addClass('no-display');
-    }, this.slideDuration / 3);
+    }, this.slideDuration / 3));
 
     // Another one to hide them at the last 4 seconds
-    setTimeout(() => {
+    this.slideViewTimeouts.push(setTimeout(() => {
       this.el.root.removeClass('caption');
-      // TweenMax.to(this.el.caption, 1, {x: this.el.caption.outerWidth()});
 
       // this.el.caption.removeClass('display');
       // this.el.captionBackground.removeClass('display');
       // this.el.miniInfo.removeClass('no-display');
-    }, this.slideDuration - 5000);
+    }, this.slideDuration - 5000));
 
     // Toggle the loading screen on the last two seconds
-    setTimeout(() => {
+    this.slideViewTimeouts.push(setTimeout(() => {
       this.el.root.addClass('loading');
-    }, this.slideDuration - 2000);
+    }, this.slideDuration - 2000));
   }
 
   cycleImages() {
-    setInterval(() => {
+    return setInterval(() => {
       if (++this.imageIterator > this.images.length - 1) {
         // Reset back to the first array if cycled past the last one
         this.imageIterator = 0;
@@ -318,6 +359,11 @@ class TimeAlert extends Presentation {
     // }, this.endTime);
   }
 
+  resetContent() {
+    // Stop the countdown
+    window.clearInterval(this.countdown);
+  }
+
   loadData(after) {
     let jsonURL = G_Sheet.assembleJSONUrl('TIME');
     let today = new Date();
@@ -337,7 +383,7 @@ class TimeAlert extends Presentation {
           });
         }
         // After fetching is finished let's run the post-load function
-        after('success');
+        return after('success');
       })
       .fail(function(jqxhr, textStatus, error) {
         return after(error);
@@ -414,7 +460,6 @@ class Announcement extends Presentation {
     this.title = '';
     this.content = '';
     this.image = '';
-    let self = this;
 
     // Lexical this! ES6 FTW
     this.loadData((result) => {
@@ -422,9 +467,14 @@ class Announcement extends Presentation {
     });
   }
 
-  loadData(after) {
-    let self = this;
+  resetContent() {
+    // Remove the contents of the title and the content
+    // TODO: Not working. Cached content issue on the DOM?
+    this.el.title.empty();
+    this.el.content.empty();
+  }
 
+  loadData(after) {
     let jsonURL = G_Sheet.assembleJSONUrl('ANNOUNCEMENT');
     $.getJSON(jsonURL)
       .done((data) => {
@@ -435,13 +485,9 @@ class Announcement extends Presentation {
         content = content.replace(/\n/g, '<br />');
         content = '<p>'+content+'</p>';
 
-        self.title = row.gsx$title.$t;
-        self.content = content;
-        self.image = row.gsx$picture.$t;
-        // Query again every 30 minutes
-        setTimeout(() => {
-          this.loadData(after);
-        }, 900000);
+        this.title = row.gsx$title.$t;
+        this.content = content;
+        this.image = row.gsx$picture.$t;
         return after('success');
       })
       .fail(function(jqxhr, textStatus, error) {
@@ -490,7 +536,81 @@ class Dashboard extends Presentation {
 }
 
 class EventTimetable extends Presentation {
-  
+  constructor() {
+    super();
+
+    this.schedule = [];
+
+    this.el = {
+      'root': $('.event-timetable'),
+      'entry': $('.event-timetable-entry')
+    }
+
+    this.loadData((result) => {
+      this.dataLoaded(result);
+    });
+  }
+
+  resetContent() {
+    this.el.root.empty().append(this.el.entry);
+    this.schedule = [];
+  }
+
+  loadData(after) {
+    $.getJSON(G_Sheet.assembleJSONUrl('EVENTTIMETABLE'))
+      .done((data) => {
+        for (var i = 0; i < data.feed.entry.length; i++) {
+          let row = data.feed.entry[i];
+
+          let title = (row.gsx$schedulename.$t);
+
+          let startTime = (row.gsx$starttimes.$t).split(':', 2);
+          // Set a date with today but with a different time
+          let today = new Date();
+          startTime = new moment([today.getFullYear(), today.getMonth(), today.getDate(), startTime[0], startTime[1], 0]);
+          let endTime = (row.gsx$endtimes.$t).split(':', 2);
+          endTime = new moment([today.getFullYear(), today.getMonth(), today.getDate(), endTime[0], endTime[1], 0]);
+
+          this.schedule.push({
+            'title': title,
+            'start': startTime,
+            'end': endTime
+          });
+        }
+        // After fetching is finished let's run the post-load function
+        return after('success');
+      })
+      .fail(function(jqxhr, textStatus, error) {
+        return after(error);
+      });
+  }
+
+  getTemplate() {
+    return this.el.entry;
+  }
+
+  insertContent(content, template = this.getTemplate()) {
+    let newElement = template.appendTo(this.el.root);
+    let $title = $('.event-timetable-entry-title', newElement);
+    let $start = $('.event-timetable-entry-start', newElement);
+    let $end = $('.event-timetable-entry-end', newElement);
+
+    $title.append(content.title);
+    $start.append(content.start.format('HH:mm'));
+    $end.append(content.end.format('HH:mm'));
+  }
+
+  dataLoaded(result) {
+    if (result === 'success') {
+      let template = this.getTemplate();
+      for (var i = 0; i < this.schedule.length; i++) {
+        this.insertContent(this.schedule[i], template.clone());
+      }
+      // After content insertion remove the template
+      template.remove();
+    }
+    super.dataLoaded(result);
+  }
 }
 
 $(function() {
@@ -518,6 +638,10 @@ $(function() {
 
     if ($('[data-dashboard]').length === 1) {
       new Dashboard();
+    }
+
+    if ($('[data-event-timetable]').length === 1) {
+      new EventTimetable();
     }
   });
 });

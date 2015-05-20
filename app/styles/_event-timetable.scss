@@ -1,0 +1,22 @@
+.event-timetable {
+  display: flex;
+  height: 100vh;
+  flex-flow: column wrap;
+}
+
+.event-timetable-entry {
+  flex: 1 0;
+  display: flex;
+  min-width: 50%;
+  padding: 2em 0;
+  text-align: center;
+  font-size: 3rem;
+
+  > div {
+    flex: 1 1;
+  }
+
+  > .event-timetable-entry-title {
+    flex-grow: 1.5;
+  }
+}

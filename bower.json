@@ -7,7 +7,6 @@
     "moment": "~2.10.2",
     "textfit": "~2.2.1",
     "jquery": "~2.1.3",
-    "gsap": "~1.16.1",
     "moment-timezone": "~0.3.1"
   }
 }

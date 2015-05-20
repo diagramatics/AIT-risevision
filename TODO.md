@@ -5,7 +5,7 @@
 - ~~Use lexical this scope for all anonymous inline functions~~
 
 Additionals:
-- Add a spinner for loading screen and use SMIL
+- Add a spinner for loading screen ~~and use SMIL~~
 - Announcements for SRC
 - Image support for announcements
 - Timetable integration for timeAlert

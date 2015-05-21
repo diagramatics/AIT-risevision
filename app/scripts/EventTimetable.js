@@ -128,7 +128,7 @@ class EventTimetable extends Presentation {
 
     setTimeout(() => {
       this.updateEventAvailability(entries);
-    }, 60000 - moment().milliseconds); // Timeout should trigger as precise as possible
+    }, 60000 - now.milliseconds()); // Timeout should trigger as precise as possible
   }
 }
 

@@ -16,30 +16,43 @@
   flex: 2 1;
   display: flex;
   flex-flow: column wrap;
-  align-content: center;
-  padding-bottom: 1rem; // Just to offset the content so the time won't block it
+  align-items: stretch;
+  align-content: stretch;
+  width: 100%;
+  padding-bottom: 1rem; // Just to offset the content so the clock won't block it
 }
 
+// TODO: Refactor this.
 .event-timetable-entry {
-  flex: 0 1 65px;
+  box-sizing: content-box; // We can add padding without it taking up inner space
+  flex: 0 1 8vmin;
   display: flex;
-  align-items: center;
-  min-width: 50%;
-  font-size: 4vmin;
-  transition: all .2s ease-in-out;
-
-  > div {
-    flex: 0 1 auto;
-    padding: 0 1em;
-  }
-
-  > .event-timetable-entry-title {
-    flex-grow: 2;
-    flex-basis: 0%;
-  }
+  flex-flow: column;
+  padding: 1rem 0;
+  justify-content: center;
 
   &.-ongoing {
     background: $ait-color-blue;
     color: white;
+  }
+}
+
+.event-timetable-entry-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 3vmin;
+  transition: all .2s ease-in-out;
+
+  > div {
+    flex: 1 0;
+    padding: 0 .5em;
+  }
+
+  > .event-timetable-entry-title {
+    flex: 2 1;
+    padding: .5em;
+    // 100vw / 2 / 6 * 4
+    //flex-basis: 0%;
   }
 }

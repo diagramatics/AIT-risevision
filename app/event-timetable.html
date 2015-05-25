@@ -35,7 +35,13 @@
     <div id="eventTimetableEntries" class="event-timetable-entries">
       <div id="eventTimetableEntryTemplate" class="event-timetable-entry">
         <div class="event-timetable-entry-inner">
-          <div class="event-timetable-entry-title"></div>
+          <div class="event-timetable-entry-info">
+            <span class="event-timetable-entry-title"></span>
+            <span class="event-timetable-entry-subtitle"></span>
+            <br />
+            <span class="event-timetable-entry-speaker"></span>
+            <span class="event-timetable-entry-location"></span>
+          </div>
           <div class="event-timetable-entry-start"></div>
           <div class="event-timetable-entry-end"></div>
         </div>
@@ -51,6 +57,7 @@
   <script src="/bower_components/moment/moment.js"></script>
   <script src="/bower_components/textfit/textFit.js"></script>
   <script src="/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+  <script src="/bower_components/tinysort/dist/tinysort.min.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 

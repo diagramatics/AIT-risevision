@@ -49,10 +49,22 @@
     padding: 0 .5em;
   }
 
-  > .event-timetable-entry-title {
+  > .event-timetable-entry-info {
     flex: 2 1;
     padding: .5em;
     // 100vw / 2 / 6 * 4
     //flex-basis: 0%;
+  }
+}
+
+.event-timetable-entry-subtitle,
+.event-timetable-entry-speaker,
+.event-timetable-entry-location {
+  font-size: .8em;
+}
+
+.event-timetable-entry-location {
+  &:before {
+    content: "// ";
   }
 }

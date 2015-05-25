@@ -49,6 +49,10 @@ class EventTimetable extends Presentation {
 
           this.schedule.push({
             'title': title,
+            'subtitle': row.gsx$subtitle.$t,
+            'type': row.gsx$type.$t,
+            'speaker': row.gsx$speaker.$t,
+            'location': row.gsx$location.$t,
             'start': startTime,
             'end': endTime
           });
@@ -68,6 +72,9 @@ class EventTimetable extends Presentation {
   insertContent(content, template = this.getTemplate(), currentTime = moment()) {
     let newElement = template.appendTo(this.el.entries);
     let $title = $('.event-timetable-entry-title', newElement);
+    let $subtitle = $('.event-timetable-entry-subtitle', newElement);
+    let $speaker = $('.event-timetable-entry-speaker', newElement);
+    let $location = $('.event-timetable-entry-location', newElement);
     let $start = $('.event-timetable-entry-start', newElement);
     let $end = $('.event-timetable-entry-end', newElement);
 
@@ -78,6 +85,9 @@ class EventTimetable extends Presentation {
     }
 
     $title.append(content.title);
+    $subtitle.append(content.subtitle);
+    $speaker.append(content.speaker);
+    $location.append(content.location);
     $start.append(content.start.format('HH:mm'));
     $end.append(content.end.format('HH:mm'));
   }
@@ -94,6 +104,8 @@ class EventTimetable extends Presentation {
       }
       // After content insertion remove the template
       template.remove();
+      // Sort the list according to the start time
+      tinysort($('.event-timetable-entry'), '.event-timetable-entry-start');
 
       // And start a timer to real time update which class are starting,
       // ongoing, and finished.

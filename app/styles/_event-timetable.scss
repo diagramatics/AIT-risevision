@@ -6,19 +6,25 @@
 }
 
 .event-timetable-message {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
   flex: 0 1 auto;
   padding: .5em 0;
-  font-size: 5vmin;
+  background: rgba(white, .8);
+  font-size: 4vmin;
   text-align: center;
 }
 
 .event-timetable-entries {
   flex: 2 1;
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: column;
   align-items: stretch;
   align-content: stretch;
   width: 100%;
+  margin-top: 5rem; // Offsetting so the fixed message won't block it
   padding-bottom: 1rem; // Just to offset the content so the clock won't block it
 }
 

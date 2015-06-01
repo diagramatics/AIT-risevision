@@ -105,13 +105,14 @@ class EventTimetable extends Presentation {
       // After content insertion remove the template
       template.remove();
       // Sort the list according to the start time
-      tinysort($('.event-timetable-entry'), '.event-timetable-entry-start');
+      tinysort($('.event-timetable-entry'), {
+        selector: '.event-timetable-entry-start',
+        useFlex: false
+      });
 
       // And start a timer to real time update which class are starting,
       // ongoing, and finished.
-      setTimeout(() => {
-        this.updateEventAvailability($('.event-timetable-entry'));
-      }, 60000 - now.seconds() * 1000 - now.milliseconds());
+      this.updateEventAvailability($('.event-timetable-entry'));
       // This is to match the timeout so it triggers at the exact minute
     }
     super.dataLoaded(result);
@@ -119,28 +120,58 @@ class EventTimetable extends Presentation {
 
   updateEventAvailability(entries) {
     let now = moment();
+    let mostTopElement = 0;
+    let combinedHeight = 0;
+    let upcoming;
     // Check if any classes are starting
     entries.each(function(index) {
+      let $this = $(this);
       let startTime = moment($('.event-timetable-entry-start', this).text(), 'HH:mm');
-      // We don't need to compare the endTime since this is done on a periodical
-      // basis and there won't be any occurences when the timer is suddenly
-      // past a class
-      if (now >= startTime) {
-        $(this).addClass('-ongoing');
+      let endTime = moment($('.event-timetable-entry-end', this).text(), 'HH:mm');
+      // Check if the event is occuring between the timeframe
+      if (now >= startTime && now < endTime) {
+        $this.addClass('-ongoing');
 
-        // Skip a check if the element has the -ongoing class and use the time
-        // This also acts as a backup if the preliminary conditional without the
-        // endTime check suddenly checks past a class
-        let endTime = moment($('.event-timetable-entry-end', this).text(), 'HH:mm');
-        if (now > endTime) {
-          $(this).removeClass('-ongoing');
+        combinedHeight += $this.outerHeight();
+
+        if (mostTopElement === 0 || mostTopElement > $this.offset().top) {
+          mostTopElement = $this.offset().top;
+        }
+      }
+      else {
+        $this.removeClass('-ongoing');
+
+        // While looping get the upcoming event too.
+        // This algorithm gets the upcoming event by getting the smallest
+        // difference between the current time and the event start time, then
+        // get the first entry of the event
+        if (now < startTime && (upcoming === undefined)) {
+          upcoming = $this.offset().top;
         }
       }
     });
 
+    // After all the highlighting position the active events in the screen
+    //$(document).velocity('stop');
+    // If the combined height is larger than the viewport height...
+    if (combinedHeight > $('html').height()) {
+      // Scroll then animate viewing the whole events top to bottom
+      $('body').velocity('scroll', { offset: mostTopElement - this.el.message.outerHeight() })
+        .velocity('scroll', {
+          offset: mostTopElement + (combinedHeight - $('html').height()),
+          loop: true,
+          duration: (60000 - now.seconds() * 1000 - now.milliseconds()) / 2
+        });
+    }
+    else {
+      // mostTopElement || upcoming. What it does is getting the topmost event
+      // being active, and if there's no events active, get the upcoming one.
+      $('body').velocity('scroll', { offset: (mostTopElement || upcoming) - this.el.message.outerHeight()  });
+    }
+
     setTimeout(() => {
       this.updateEventAvailability(entries);
-    }, 60000 - now.milliseconds()); // Timeout should trigger as precise as possible
+    }, 60000 - now.seconds() * 1000 - now.milliseconds()); // Timeout should trigger as precise as possible
   }
 }
 

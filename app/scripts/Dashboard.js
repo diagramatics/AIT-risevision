@@ -1,5 +1,5 @@
 import Presentation from './Presentation';
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 
 class Dashboard extends Presentation {
   constructor() {

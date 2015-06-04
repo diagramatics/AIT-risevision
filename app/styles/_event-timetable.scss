@@ -19,22 +19,20 @@
 
 .event-timetable-entries {
   flex: 2 1;
-  display: flex;
+  /* display: flex;
   flex-flow: column;
   align-items: stretch;
-  align-content: stretch;
+  align-content: stretch; */
   width: 100%;
-  margin-top: 5rem; // Offsetting so the fixed message won't block it
-  padding-bottom: 1rem; // Just to offset the content so the clock won't block it
+  margin-top: 6rem; // Offsetting so the fixed message won't block it
 }
 
 // TODO: Refactor this.
 .event-timetable-entry {
-  box-sizing: content-box; // We can add padding without it taking up inner space
   flex: 0 1 8vmin;
   display: flex;
   flex-flow: column;
-  padding: 1rem 0;
+  /* padding: 1rem 0; */
   justify-content: center;
 
   &.-ongoing {

@@ -1,5 +1,5 @@
 import Presentation from './Presentation';
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 
 class TimeAlert extends Presentation {
   constructor() {
@@ -30,7 +30,7 @@ class TimeAlert extends Presentation {
   }
 
   loadData(after) {
-    let jsonURL = G_Sheet.assembleJSONUrl('TIME');
+    let jsonURL = GSheet.assembleJSONUrl('TIME');
     let today = new Date();
     $.getJSON(jsonURL)
       .done((data) => {

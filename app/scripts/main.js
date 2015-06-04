@@ -3,7 +3,7 @@
 'use strict';
 
 // Import everything. ES6 + Babel + Browserify rocks!
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 import Time from './Time';
 import Gallery from './Gallery';
 import TimeAlert from './TimeAlert';
@@ -13,7 +13,7 @@ import EventTimetable from './EventTimetable';
 
 $(function() {
   // Initialize the Google Sheet class
-  G_Sheet.initialize(function() {
+  GSheet.initialize(function() {
     // When data is loaded do these
 
     if ($('[data-time]').length === 1) {

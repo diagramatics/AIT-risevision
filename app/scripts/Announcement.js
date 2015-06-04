@@ -1,5 +1,5 @@
 import Presentation from './Presentation';
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 
 class Announcement extends Presentation {
   constructor() {
@@ -27,7 +27,7 @@ class Announcement extends Presentation {
   }
 
   loadData(after) {
-    let jsonURL = G_Sheet.assembleJSONUrl('ANNOUNCEMENT');
+    let jsonURL = GSheet.assembleJSONUrl('ANNOUNCEMENT');
     $.getJSON(jsonURL)
       .done((data) => {
         let row = data.feed.entry[0];

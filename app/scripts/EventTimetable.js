@@ -1,5 +1,5 @@
 import Presentation from './Presentation';
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 
 class EventTimetable extends Presentation {
   constructor() {
@@ -28,7 +28,7 @@ class EventTimetable extends Presentation {
   }
 
   loadData(after) {
-    $.getJSON(G_Sheet.assembleJSONUrl('EVENTTIMETABLE'))
+    $.getJSON(GSheet.assembleJSONUrl('EVENTTIMETABLE'))
       .done((data) => {
         for (var i = 0; i < data.feed.entry.length; i++) {
           let row = data.feed.entry[i];

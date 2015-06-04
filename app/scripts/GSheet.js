@@ -1,4 +1,4 @@
-class G_Sheet {
+class GSheet {
   constructor() {}
   /**
     * Initialize the Google Sheet class
@@ -20,7 +20,7 @@ class G_Sheet {
         after();
       })
       .fail(function(jqxhr, textStatus, error) {
-        //throw error;
+        throw error;
       });
   }
 
@@ -39,7 +39,7 @@ class G_Sheet {
   // };
 }
 
-export default G_Sheet;
+export default GSheet;
 
 
 

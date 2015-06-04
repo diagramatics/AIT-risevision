@@ -1,5 +1,5 @@
 import Presentation from './Presentation';
-import G_Sheet from './G_Sheet';
+import GSheet from './GSheet';
 
 class Gallery extends Presentation {
   constructor() {
@@ -77,7 +77,7 @@ class Gallery extends Presentation {
    * Load data images from the predefined Google Spreadsheets set on top
    */
   loadData(after) {
-    let jsonURL = G_Sheet.assembleJSONUrl('GALLERY');
+    let jsonURL = GSheet.assembleJSONUrl('GALLERY');
     // Fetch the JSON from the URL given from the setting
     $.getJSON(jsonURL)
       .done((data) => {

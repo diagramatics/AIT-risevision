@@ -5,7 +5,7 @@ class Gallery extends Presentation {
   constructor() {
     super();
 
-    this.slideDuration = 10000;
+    this.slideDuration = 60000;
     // this.images = [
     //   {
     //     'image': 'http://www.googledrive.com/host/0ByZQ9gv3kichN3FTZWdJLUdmVzA',

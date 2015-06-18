@@ -1,11 +1,25 @@
 .announcement {
   font-size: 2.4rem;
   width: 70%;
-  height: 95vh;
+  height: 100vh;
   margin: 0 auto;
+
+  &.has-background {
+    background: rgba(white, .8);
+    
+    &.empty-text {
+      background: none;
+    }
+  }
+
+
 
   p {
     margin-bottom: 1em;
+  }
+
+  > .textFitted {
+    padding: 1rem 2rem;
   }
 }
 
@@ -13,4 +27,12 @@
   margin: 0 0 .5em;
   font-size: 2.4em;
   text-align: center;
+}
+
+.announcement-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }

@@ -6,6 +6,7 @@ class Announcement extends Presentation {
     super();
     this.el = {
       'root': $('#announcement'),
+      'background': $('#announcementBackground'),
       'title': $('#announcementTitle'),
       'content': $('#announcementContent')
     };
@@ -21,6 +22,8 @@ class Announcement extends Presentation {
   }
 
   resetContent() {
+    this.el.root.removeClass('has-background empty-text');
+    this.el.background.css('background-image', '');
     // Remove the contents of the title and the content
     this.el.title.empty();
     this.el.content.empty();
@@ -53,12 +56,21 @@ class Announcement extends Presentation {
     // object again.
     this.el.title.html(this.title);
     this.el.content.html(this.content);
+
+    if (this.image !== '') {
+      this.el.background.css('background-image', 'url('+ this.image +')');
+      this.el.root.addClass('has-background');
+    }
+
+    if (this.title === '' && this.content === '<p></p>') {
+      this.el.root.addClass('empty-text');
+    }
   }
 
   fitContent() {
     this.el.root.css({
-      'width': $('#announcement').css('width'),
-      'height': $('#announcement').css('height')
+      'width': this.el.root.outerWidth(),
+      'height': this.el.root.outerHeight()
     });
     textFit(this.el.root[0], {
       alignHoriz: true,

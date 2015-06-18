@@ -1,3 +1,4 @@
+/* global moment */
 class Time {
   constructor() {
     let time = this.getTime();
@@ -14,11 +15,11 @@ class Time {
       let time = this.getTime();
       this.$element.html(time.format('h:mm:ss a'));
       this.updateTime(time);
-    }, 1000 - (oldTime.format('x')).slice(-3))
+    }, 1000 - (oldTime.format('x')).slice(-3));
   }
 
   getTime() {
-    return moment().tz("Australia/Sydney");
+    return moment().tz('Australia/Sydney');
   }
 }
 

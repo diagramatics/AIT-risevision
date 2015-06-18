@@ -110,7 +110,7 @@ class Gallery extends Presentation {
     for (var i = 0; i < this.images.length; i++) {
       // Preload images by making an <img> tag that's not used anywhere
       // That way browser assumes it exists, needs the image and try and load it
-      $("<img />").attr("src", this.images[i].image);
+      $('<img />').attr('src', this.images[i].image);
     }
   }
 

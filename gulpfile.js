@@ -48,11 +48,12 @@ gulp.task('jshint', function () {
 });
 
 gulp.task('html', ['styles', 'scripts'], function () {
-  var assets = $.useref.assets({searchPath: ['.tmp', 'app', '.']});
+  var assets = $.useref.assets({searchPath: ['.tmp', '.']});
 
   return gulp.src('app/*.html')
     .pipe(assets)
     .pipe($.if('*.js', $.uglify()))
+    .on('error', console.error.bind(console, 'Uglify error:'))
     .pipe($.if('*.css', $.csso()))
     .pipe(assets.restore())
     .pipe($.useref())

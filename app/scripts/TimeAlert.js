@@ -1,3 +1,4 @@
+/* global countdown */
 import Presentation from './Presentation';
 import GSheet from './GSheet';
 
@@ -72,7 +73,6 @@ class TimeAlert extends Presentation {
   }
 
   calculateNearestClass(today) {
-    let nextClass = false;
     for (let i = 0; i < this.times.length; i++) {
       // If the next schedule hasn't passed the current time yet
       if (today < this.times[i].start) {
@@ -97,7 +97,6 @@ class TimeAlert extends Presentation {
         this.clearCountdown();
       }
     }
-    let time = moment();
     let hours = '';
     let minutes = ts.minutes;
     if (ts.hours !== 0) {

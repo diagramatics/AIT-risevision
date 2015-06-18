@@ -1,5 +1,3 @@
-/* jshint devel:true */
-/* global moment, countdown, textFit */
 'use strict';
 
 // Import everything. ES6 + Babel + Browserify rocks!

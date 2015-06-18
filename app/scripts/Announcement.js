@@ -1,3 +1,4 @@
+/* global textFit */
 import Presentation from './Presentation';
 import GSheet from './GSheet';
 

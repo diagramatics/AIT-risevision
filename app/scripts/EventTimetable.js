@@ -1,3 +1,4 @@
+/* global moment, tinysort */
 import Presentation from './Presentation';
 import GSheet from './GSheet';
 
@@ -13,7 +14,7 @@ class EventTimetable extends Presentation {
       'message': $('#eventTimetableMessage'),
       'entries': $('#eventTimetableEntries'),
       'entryTemplate': $('#eventTimetableEntryTemplate')
-    }
+    };
 
     this.loadData((result) => {
       this.dataLoaded(result);
@@ -124,7 +125,7 @@ class EventTimetable extends Presentation {
     let combinedHeight = 0;
     let upcoming;
     // Check if any classes are starting
-    entries.each(function(index) {
+    entries.each(function() {
       let $this = $(this);
       let startTime = moment($('.event-timetable-entry-start', this).text(), 'HH:mm');
       let endTime = moment($('.event-timetable-entry-end', this).text(), 'HH:mm');
